@@ -44,7 +44,7 @@ md"""
 """
 
 # ╔═╡ 906f0099-2e11-49be-96c6-09aa56cbb178
-  d = CSV.read("decisionDF.csv", DataFrame)  # !!! → file path
+  d = CSV.read("decision_df.csv", DataFrame)  # !!! → file path
 
 # ╔═╡ 34509c2c-0309-4fe6-8965-8af67cb59c74
 md"""
@@ -610,112 +610,203 @@ question_box("""
 """)
 
 
-# ╔═╡ b3d910e9-399d-427d-b195-6821acec0ef4
-mean(d_clean.decisionTime[d_clean.probability_abs .== 0 .&& d_clean.arrangement .== "Random"])
-
 # ╔═╡ 9abe9b07-1108-4429-b23e-4bf3152ae30c
 md"""
 ### Reference / Dummy Coding
 Let's change the reference level of the categorical predictor.
+You can do so, by specifying the `contrasts=Dict()` argument to the `lmm` function.
+
+e.g. `contrasts=Dict(:my_predictor => DummyCoding(base="basis"))`
+
+will set the `my_predictor` factor (maybe with levels "basis" and "extension") to a DummyCoded factor with the reference-group being `basis`
 """
 
-# ╔═╡ ce3a813e-a67d-453b-8ff4-35f515770e33
-m_dummy = lmm(@formula(decisionTime ~ 1 + arrangement + probability_abs + (1+ arrangement + probability_abs | participant_id)), d_clean; contrasts=Dict(:arrangement=>DummyCoding(base="Ordered")))
+# ╔═╡ 89c88934-8f10-4c46-b2cc-c39c39c8e103
+question_box("""
+- Think: What is the current reference level of `:arrangement`?
+- Flip the reference level `:arrangement` to the other level. What values change, and do they change according to your expectations?
+""")
 
+# ╔═╡ 7cb31f1a-fa43-4ef9-96a8-b234a41ac179
+f_dummy = @formula decisionTime ~ 1 + arrangement * probability_abs + (1 + arrangement * probability_abs | participant_id);
+
+# ╔═╡ c95a87d1-e6be-4c5d-bfdd-1f162cfc2550
+lmm(f_dummy, d_clean)
+
+# ╔═╡ 414fceee-b97e-4526-b8d9-cf05049e4ebd
+lmm(f_dummy, d_clean; contrasts=Dict(:arrangement=>DummyCoding(base="Random")))
 
 # ╔═╡ 07b578ea-0f90-4ace-8cbc-91944f889cda
 md"""
 ### Effect Coding
-Let's change the meaning of the intercept, so that it reflects the average response, not a specific reference level
+Let's change the meaning of the intercept, so that it reflects the average response, not a specific reference level.
 """
 
-# ╔═╡ 7fc6c4ed-2610-4ced-9ed9-cec74eada4d5
-md"""
-## Exercise Y: Singular fits
-"""
+# ╔═╡ a0471a1c-6654-4957-a8b2-265001ea540a
+question_box("""
+Use `EffectsCoding()` to declare an effect coded effect of `:arrangement` """)
 
-# ╔═╡ e5bcdfdb-52c8-44a6-8806-c0deb24fe78a
+# ╔═╡ d31683ef-e564-4380-917a-e8baad847eb6
+lmm(f_dummy, d_clean; contrasts=Dict(:arrangement=>EffectsCoding()))
 
-
-# ╔═╡ 514dd457-37a7-4a28-a43b-b2cde5a09d49
+# ╔═╡ f4ebf000-3b48-4ac5-b188-fb0fe952e16b
 # ---
 
 md"""
-## Exercise 8: Crossed Random Effects (Items)
+## Exercise 7: Item effects
 
-In some designs, there are multiple sources of random variation that cross
-each other. For example, different participants (subjects) seeing different
-stimuli (items). Both participants and items contribute random variability.
+In many designs, there are multiple sources of random variation. For example, different participants (subjects) seeing different
+stimuli (items). Or different lab-setups, or different blocks, different schools, even pairs in matched pair designs.
 
-Currently, our dataset does not include item-level identifiers. This exercise
-is a conceptual placeholder for when such data is available.
 """
 
-# ╔═╡ a13a5cec-e763-4ee2-ba82-f4ebc6323ee2
-begin
-  PlutoTeachingTools.question_box(md"""
-  **Task**: (Conceptual - Placeholder)
+# ╔═╡ dea1063a-61b3-47c6-912d-94a7894614ec
+PlutoTeachingTools.warning_box("""
+Our dataset does not currently have enough different items to allow us to test this variability. We therefore **simulated a second experiment**, very similar to the current experiment, but now with 10 instances of stimuli (out of a virtual "infinite" pool/population of possible experimental stimuli).
 
-  Imagine your experiment used different stimulus images, and each image has
-  an `item_id`. How would you extend the model?
+""")
 
-  1. What would the formula look like with both `(1 + probability_abs | participant_id)` and `(1 | item_id)`?
-  2. How would you test whether the item random effect is necessary?
-  3. What would a large item variance tell you about your stimuli?
+# ╔═╡ c9131bc9-34ba-4e93-8399-90a66ae39753
+	d_sim = CSV.read("df_simulated.csv",DataFrame,stringtype=String)
 
-  **Conceptual question**: Why is ignoring crossed random effects a problem? Think about what happens to your standard errors.
-  """)
-
-  PlutoTeachingTools.hint(md"""
-  **Hint**:
-
-  A crossed random effects model would look like:
-  ```julia
-  m_crossed = lmm(@formula(decisionTime ~ probability_abs +
-      (1 + probability_abs | participant_id) +
-      (1 | item_id)), d_clean)
-  ```
-
-  Test with `lrtest()` against the participant-only model.
-
-  **Why it matters**: Ignoring item variability inflates Type-I error (false positives) because it treats the same items as independent observations.
-  """)
-end
-
-# ╔═╡ 2e465b2c-700b-4b76-92e3-994c93541225
+# ╔═╡ 1b8b400b-7b04-43ad-8902-dc3eb6598fc7
 md"""
-FIXME: Implement when item_id column is available
-The code below is a placeholder. Uncomment and fill in when item identifiers exist.
+The dataset reflects now a 2 x 3 design. `:arrangement` still has two levels, ordered & random. Whereas we will now include `:iconicity:` reflecting how the actual stimulus looked like. There are three levels, `natural`,`square`, and `house`.
 
-m_crossed = lmm(@formula(decisionTime ~ probability_abs +
-    (1 + probability_abs | participant_id) +
-    (1 | !!!)),  # !!! → item identifier column
-    !!!)          # !!! → dataframe
+Further, there is a new column `item`, tracking which underlying stimulus properties were simulated. For instance, imagine we are able to simulating images of 100 houses of a small city to be evacuated (one "item"). 
 
-lrtest(!!!, m_crossed)  # !!! → participant-only model
+We can arrange them either `Ordered` (all burning buildings in one spot) or `Random`. Thus we can use the same house-images in two conditions. 
+
+But we cannot use the "natural", "square" and "house" `:iconicit` because they fundamentally change how our stimuli look.
+
+In total we have 2 * 3 * 4 trials per subject - the 4 is because each trial was ran 4 times.
 """
 
-# ╔═╡ ec0c691d-1af1-4110-9a4f-3b9256345cd6
-begin
-  println("Placeholder: Crossed random effects exercise (see question above)")
+# ╔═╡ b511572c-80fd-46eb-8ad7-39233cb938ef
+d_sim[d_sim.participant_id.=="S001",:]
 
-  PlutoTeachingTools.tip(md"""
-  **When to include crossed random effects**:
-  - Different participants see different items → crossed
-  - All participants see the same items → nested (items within participants)
-  - Multiple raters rating the same items → crossed
-  """)
+# ╔═╡ 4dbd3fa4-6918-4729-9c6b-4586bed44da6
+question_box(md"""
+- Which factor should be fixed effect?
+- Which factor should get a random slope?
+
+Remember to now think both of `(1 + ... |subject)` as well as `(1 + ... |item)`!!
+			 """)
+
+# ╔═╡ eceaed34-060f-47b3-8085-c6c09c5d61b6
+#f_item = @formula decisionTime ~ ... 
+
+# ╔═╡ 27d2ad90-ecd8-42e7-b552-85b7653b595c
+md"""
+### Visualisation
+Let's have a quick look at the actual data
+"""
+
+# ╔═╡ 903ce2d5-4d7d-4fec-9890-790acf9d9e37
+#data(...) * mapping(...) * (visual(...) + smooth()) |> draw
+data(d_sim) * mapping(:iconicity, :decisionTime, color=:arrangement) *
+      (visual(Beeswarm; algorithm=:quasirandom, alpha=0.1) )|> draw
+
+# ╔═╡ 3a7dc1c6-9250-4213-99c0-8ad5b5f7f248
+question_box("""
+What do you notice - are these realistic simulations?
+			 """)
+
+# ╔═╡ a0a0c2ad-7b00-48a9-a823-2016fd32b4db
+
+
+# ╔═╡ 26526500-c60c-499d-acc7-18db98460998
+md"""
+### Including item effects
+Item effects should always be included if possible. Else your false-positivity rate can be severely increase!!
+"""
+
+# ╔═╡ a134ac4d-1a96-4121-a41e-98a230e45c28
+PlutoTeachingTools.aside(md"Highly recommended to read: [Yarkoni  2019 the Generalization Crisis](https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/generalizability-crisis/AD386115BA539A759ACB3093760F4824)")
+
+# ╔═╡ ac6a0431-c175-410a-a8f7-5dc91e3c5362
+question_box("""
+- Fit the specified model including the item-effects in the formula.
+- Inspect the fitted Correlation Matrix via `VarCorr(m_item)` - which factor has the highest, which the lowest variability over subjects?
+- Fit a model without the item-effect and compare them via lrtest
+			 
+""")
+
+# ╔═╡ fe88bcbc-6070-43b1-ae69-f4ea0f464186
+begin
+    m_noitem = lmm(@formula(decisionTime ~ iconicity*arrangement +
+    (1 + iconicity*arrangement | participant_id)),
+    d_sim)
+    
+    m_item = lmm(@formula(decisionTime ~ iconicity*arrangement +
+    (1 + iconicity*arrangement | participant_id) +
+    (1 + arrangement | item)),  
+    d_sim)
 end
+
+# ╔═╡ f23e3380-47a1-4240-aafe-fb0c4759b09f
+VarCorr(m_item)
+
+# ╔═╡ ac8b3755-b276-47b9-97ae-0efee3d00770
+lrtest(m_noitem, m_item)
+
+# ╔═╡ 7fc6c4ed-2610-4ced-9ed9-cec74eada4d5
+md"""
+## Exercise 7: Singular fits
+
+Often we do not have the luxus of >100 subjects. Or we have very complex models. Then these models often run into singular fits.
+"""
+
+# ╔═╡ e5bcdfdb-52c8-44a6-8806-c0deb24fe78a
+question_box("""
+- Fit a LMM on a subset of subjects (`d_subset`). Use the maximal random effects structure for `arrangement*probability_abs`
+- use `VarCorr(...)` to inspect the fit - is the model singular ("NANs", perfect "0" or "-1"/"1" in the correlation structure)
+- Compare your conclusion to `MixedModels.rePCA(...)`, same results?
+- How would you simplify your model to get a non-singular modelfit?
+
+			 
+""")
+
+# ╔═╡ d3713199-aecb-4f41-8705-e811b875cb17
+d_subset = subset(d_clean,:participant_id=> x-> x.<=15);
+
+# ╔═╡ db320ffd-2a79-46a2-a42a-c33a80246673
+m_subset = lmm(@formula(decisionTime ~ arrangement*probability_abs + (1+arrangement*probability_abs|participant_id)),d_subset)
+
+# ╔═╡ 9c69199e-5637-4af7-9664-720848078109
+VarCorr(m_subset)
+
+# ╔═╡ 6c57e246-bf26-4bd1-a7b0-1ad386a19990
+MixedModels.rePCA(m_subset)
+
+# ╔═╡ eb8ee8b6-8cb0-4cbb-8132-dd512d7cb661
+m_subset_simple = lmm(@formula(decisionTime ~ arrangement*probability_abs + (1+arrangement*probability_abs|participant_id)),d_subset)
+
+# ╔═╡ 95dc2cf3-3b07-4438-95a2-8f5f857b3107
+MixedModels.rePCA(m_subset_simple)
+
+# ╔═╡ 912b794a-18f4-4471-91e5-01e8ab412edf
+d_clean
+
+# ╔═╡ 86599e5a-6d28-4ab2-97d3-3751258feccb
+question_box("""
+Instead relying on your semi-subjective singularity-detection, you can also statistical test whether to keep an effect with likelihood-ratio tests. Can you confirm your earlier conclusions?			 
+			 """)
+
+# ╔═╡ 8e3311d9-c4d9-4ee1-a97a-260d82855ddb
+md"""
+## Further Reading
+"""
 
 # ╔═╡ 890a3957-80f6-4213-919a-cf3d17f71053
 begin
   PlutoTeachingTools.tip(md"""
   **Further reading**:
 
-  - Embracing Uncertainty - Book based on MixedModels.jl with several applications
-  - MixedModels.jl documentation: https://juliastats.org/MixedModels.jl
-  - Bates et al. (2015) Parsimonious Mixed Models: https://arxiv.org/abs/1506.04967
-  - Barr et al. (2013) Keep it maximal: https://doi.org/10.3758/s13428-012-0272-z
+  - [Embrace Uncertainty - Book based on MixedModels.jl with several applications](https://embraceuncertaintybook.com/index.html)
+  - [MixedModels.jl documentation](https://juliastats.org/MixedModels.jl)
+  - [Matuschek et al. (2017) Balancing Type I error and power in linear mixed models](https://www.sciencedirect.com/science/article/pii/S0749596X17300013)
+  - [Barr et al. (2013) Keep it maximal](https://www.sciencedirect.com/science/article/pii/S0749596X12001180)
   """)
 end
 
@@ -2993,18 +3084,44 @@ version = "4.1.0+0"
 # ╟─c7e12506-794d-4e7e-9057-d7366d471c56
 # ╟─7aa7a638-13e8-4cbc-b49f-dc5dc81afd21
 # ╠═d685bcf3-ad80-4c8e-94c4-04493e2772e5
-# ╠═59b58890-f272-4c54-a151-3f39bf7e2cae
-# ╠═900fc5da-0296-486a-bfe2-49aa7d6a2ec3
-# ╠═b3d910e9-399d-427d-b195-6821acec0ef4
-# ╠═9abe9b07-1108-4429-b23e-4bf3152ae30c
-# ╠═ce3a813e-a67d-453b-8ff4-35f515770e33
+# ╟─59b58890-f272-4c54-a151-3f39bf7e2cae
+# ╟─900fc5da-0296-486a-bfe2-49aa7d6a2ec3
+# ╟─9abe9b07-1108-4429-b23e-4bf3152ae30c
+# ╟─89c88934-8f10-4c46-b2cc-c39c39c8e103
+# ╠═7cb31f1a-fa43-4ef9-96a8-b234a41ac179
+# ╠═c95a87d1-e6be-4c5d-bfdd-1f162cfc2550
+# ╠═414fceee-b97e-4526-b8d9-cf05049e4ebd
 # ╠═07b578ea-0f90-4ace-8cbc-91944f889cda
+# ╟─a0471a1c-6654-4957-a8b2-265001ea540a
+# ╠═d31683ef-e564-4380-917a-e8baad847eb6
+# ╟─f4ebf000-3b48-4ac5-b188-fb0fe952e16b
+# ╟─dea1063a-61b3-47c6-912d-94a7894614ec
+# ╠═c9131bc9-34ba-4e93-8399-90a66ae39753
+# ╟─1b8b400b-7b04-43ad-8902-dc3eb6598fc7
+# ╠═b511572c-80fd-46eb-8ad7-39233cb938ef
+# ╟─4dbd3fa4-6918-4729-9c6b-4586bed44da6
+# ╠═eceaed34-060f-47b3-8085-c6c09c5d61b6
+# ╟─27d2ad90-ecd8-42e7-b552-85b7653b595c
+# ╟─903ce2d5-4d7d-4fec-9890-790acf9d9e37
+# ╟─3a7dc1c6-9250-4213-99c0-8ad5b5f7f248
+# ╠═a0a0c2ad-7b00-48a9-a823-2016fd32b4db
+# ╟─26526500-c60c-499d-acc7-18db98460998
+# ╟─a134ac4d-1a96-4121-a41e-98a230e45c28
+# ╟─ac6a0431-c175-410a-a8f7-5dc91e3c5362
+# ╠═fe88bcbc-6070-43b1-ae69-f4ea0f464186
+# ╠═f23e3380-47a1-4240-aafe-fb0c4759b09f
+# ╟─ac8b3755-b276-47b9-97ae-0efee3d00770
 # ╟─7fc6c4ed-2610-4ced-9ed9-cec74eada4d5
-# ╠═e5bcdfdb-52c8-44a6-8806-c0deb24fe78a
-# ╠═514dd457-37a7-4a28-a43b-b2cde5a09d49
-# ╠═a13a5cec-e763-4ee2-ba82-f4ebc6323ee2
-# ╠═2e465b2c-700b-4b76-92e3-994c93541225
-# ╠═ec0c691d-1af1-4110-9a4f-3b9256345cd6
-# ╠═890a3957-80f6-4213-919a-cf3d17f71053
+# ╟─e5bcdfdb-52c8-44a6-8806-c0deb24fe78a
+# ╠═d3713199-aecb-4f41-8705-e811b875cb17
+# ╠═db320ffd-2a79-46a2-a42a-c33a80246673
+# ╠═9c69199e-5637-4af7-9664-720848078109
+# ╠═6c57e246-bf26-4bd1-a7b0-1ad386a19990
+# ╠═eb8ee8b6-8cb0-4cbb-8132-dd512d7cb661
+# ╠═95dc2cf3-3b07-4438-95a2-8f5f857b3107
+# ╠═912b794a-18f4-4471-91e5-01e8ab412edf
+# ╟─86599e5a-6d28-4ab2-97d3-3751258feccb
+# ╟─8e3311d9-c4d9-4ee1-a97a-260d82855ddb
+# ╟─890a3957-80f6-4213-919a-cf3d17f71053
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
