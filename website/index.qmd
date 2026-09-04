@@ -2,13 +2,15 @@
 title: "LMM Workshop 2026"
 ---
 
+We will discuss Linear Mixed Models in the context of (visualization) user studies and beyond.
+
 ## Dates
 
 10 & 11 September 2026
 
 ## Program
 
-t.b.a.
+See the program on this website
 
 ## Organizers
 

@@ -5,10 +5,10 @@ title: "Installation guide"
 To actively participate in the workshop and use the notebooks we provided, you will need to install both Julia and Pluto.jl on your system. The following is a minimal guide on how to do this. You can find more extensive information in the [Pluto.jl documentation](https://plutojl.org/en/docs/install/) (which this guide is based on) and also watch their [instruction video](https://computationalthinking.mit.edu/Fall24/installation/).
 
 ::: {.callout-note}
-Please note that we will not be able to help with installing Julia and/or Pluto during the workshop. If you experience problems please contact us *before* the day of the workshop. Best case you explain your issue in our [GitHub discussion](https://github.com/unfoldtoolbox/Unfold.jl/discussions/categories/unfold-jl-workshop-2025), here you can also see problems others had (you will need a GitHub account to make contributions). 
+Please note that we will not have dedicated time to be able to help with installing Julia and/or Pluto during the workshop. If you experience problems please contact us *before* the workshop. 
 :::
 
-In this video, Romy and Ruman show how to install everything using the steps below.
+In this video (recorded for a similar workshop with identical instructions), Romy shows how she installed everything using the steps below.
 {{< video https://www.youtube.com/watch?v=vISEPanHxdc >}}
 
 # Installation
@@ -20,7 +20,7 @@ In most cases, we recommend installing Julia through the julia-version manager `
 
 **MacOS/Linux:** open a terminal and run `curl -fsSL https://install.julialang.org | sh`
 
-❌ Something didn't work? [Try following the instructions here](https://github.com/JuliaLang/juliaup). You can also ask questions in our [Unfold.jl github-discussion group](https://github.com/unfoldtoolbox/Unfold.jl/discussions/categories/unfold-jl-workshop-2025)
+❌ Something didn't work? [Try following the instructions here](https://github.com/JuliaLang/juliaup). You can also send as an e-mail and we will help you.
 
 
 If all things fail, you can also try to go to [https://julialang.org/downloads](https://julialang.org/downloads) and install the latest stable release.
@@ -58,7 +58,7 @@ We are providing a "package installation" notebook. This will make sure that eve
 
 1. Copy this link to the installation notebook: 
 ```{.default .code-overflow-wrap}
-https://github.com/s-ccs/workshop_unfold_2025/blob/main/00_installation.jl
+https://github.com/s-ccs/workshop_lmm_2026/blob/main/00_installation.jl
 ```
 
 2. Put it in the Pluto.jl box next to **open a notebook**.

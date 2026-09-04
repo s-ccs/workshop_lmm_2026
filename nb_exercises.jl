@@ -559,11 +559,9 @@ end
 
 md"""
 **Interpret the interaction**:
-- Look at the coefficient for `probability_abs:arrangement`
-- A significant interaction means the effect of probability distance
-  on decision time differs between Ordered and Random arrangements
+- Look at the coefficient for `probability_abs:arrangement` - but sometimes hard to understand whats going on!
 
-Visualize the interaction using effects (requires `using Effects`)
+Visualize the interaction using effects (`using Effects`)
 """
 
 # ╔═╡ ec8f1d5e-ed36-4a43-add3-85d2b56a8ea5
@@ -573,6 +571,9 @@ begin
 
   current_figure()
 end
+
+# ╔═╡ 9446fd59-f0f0-4933-887e-cd36540e5641
+question_box("Do you observe an interaction of arrangement and probability_abs?")
 
 # ╔═╡ c7e12506-794d-4e7e-9057-d7366d471c56
 md"""
@@ -585,10 +586,6 @@ Now we use LRT to test the interaction.
 
 
 What is your conclusion, is there evidence for an interaction effect?
-
-
-**Tip:** *You need to modify the random effects structure in the `m_main` model for a proper test!*
-
 """)
 
 # ╔═╡ d685bcf3-ad80-4c8e-94c4-04493e2772e5
@@ -598,12 +595,47 @@ lrtest(m_int, m_main)
 # ╔═╡ 59b58890-f272-4c54-a151-3f39bf7e2cae
 md"""
 ## Exercise X: Different categorical coding schemes
+We have been ignoring the intercept a little bit, let's have a look. Take `m_int` for now on (the model with interaction).
+
+**Intercept**: $(Int(round(coef(m_int)[1])))
+
+Okay, so what does this number mean?
+
+"""
+
+# ╔═╡ 900fc5da-0296-486a-bfe2-49aa7d6a2ec3
+question_box("""
+- What are the units of the intercept
+- What does this value correspond to? How would you calculate it from the actual data?
+""")
+
+
+# ╔═╡ b3d910e9-399d-427d-b195-6821acec0ef4
+mean(d_clean.decisionTime[d_clean.probability_abs .== 0 .&& d_clean.arrangement .== "Random"])
+
+# ╔═╡ 9abe9b07-1108-4429-b23e-4bf3152ae30c
+md"""
+### Reference / Dummy Coding
+Let's change the reference level of the categorical predictor.
+"""
+
+# ╔═╡ ce3a813e-a67d-453b-8ff4-35f515770e33
+m_dummy = lmm(@formula(decisionTime ~ 1 + arrangement + probability_abs + (1+ arrangement + probability_abs | participant_id)), d_clean; contrasts=Dict(:arrangement=>DummyCoding(base="Ordered")))
+
+
+# ╔═╡ 07b578ea-0f90-4ace-8cbc-91944f889cda
+md"""
+### Effect Coding
+Let's change the meaning of the intercept, so that it reflects the average response, not a specific reference level
 """
 
 # ╔═╡ 7fc6c4ed-2610-4ced-9ed9-cec74eada4d5
 md"""
 ## Exercise Y: Singular fits
 """
+
+# ╔═╡ e5bcdfdb-52c8-44a6-8806-c0deb24fe78a
+
 
 # ╔═╡ 514dd457-37a7-4a28-a43b-b2cde5a09d49
 # ---
@@ -2951,17 +2983,24 @@ version = "4.1.0+0"
 # ╠═cdc57ada-875f-497f-8ead-1bcf5d9d0749
 # ╟─2e0b5bef-bdd4-4f89-b107-15350e97a633
 # ╟─4f1be5d7-3956-459d-a6e0-e727b7665e8d
-# ╠═e5a357c8-72a5-415b-b35d-1d8c539ff8c7
-# ╠═f9d661a6-8e77-441d-9769-5af6bd73219e
+# ╟─e5a357c8-72a5-415b-b35d-1d8c539ff8c7
+# ╟─f9d661a6-8e77-441d-9769-5af6bd73219e
 # ╠═ac944cf9-39fc-4490-876e-e2c28d981c27
-# ╟─b0e8e407-e311-415e-acbe-d494bff9522b
+# ╠═b0e8e407-e311-415e-acbe-d494bff9522b
 # ╠═77162f08-750f-48b0-a13b-db80f3dd004e
 # ╠═ec8f1d5e-ed36-4a43-add3-85d2b56a8ea5
+# ╟─9446fd59-f0f0-4933-887e-cd36540e5641
 # ╟─c7e12506-794d-4e7e-9057-d7366d471c56
 # ╟─7aa7a638-13e8-4cbc-b49f-dc5dc81afd21
 # ╠═d685bcf3-ad80-4c8e-94c4-04493e2772e5
 # ╠═59b58890-f272-4c54-a151-3f39bf7e2cae
+# ╠═900fc5da-0296-486a-bfe2-49aa7d6a2ec3
+# ╠═b3d910e9-399d-427d-b195-6821acec0ef4
+# ╠═9abe9b07-1108-4429-b23e-4bf3152ae30c
+# ╠═ce3a813e-a67d-453b-8ff4-35f515770e33
+# ╠═07b578ea-0f90-4ace-8cbc-91944f889cda
 # ╟─7fc6c4ed-2610-4ced-9ed9-cec74eada4d5
+# ╠═e5bcdfdb-52c8-44a6-8806-c0deb24fe78a
 # ╠═514dd457-37a7-4a28-a43b-b2cde5a09d49
 # ╠═a13a5cec-e763-4ee2-ba82-f4ebc6323ee2
 # ╠═2e465b2c-700b-4b76-92e3-994c93541225

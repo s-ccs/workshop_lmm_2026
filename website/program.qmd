@@ -10,23 +10,25 @@ All times are in Central European Summer Time (CEST).
 
 | Time          | Event                                                                              |
 |---------------|------------------------------------------------------------------------------------|
-| 10:00 - 10:10 | Welcome                                                                            |
-| 10:10 - 10:30 | Introduction to Julia & Unfold.jl                                                  |
-| 10:30 - 11:30 | Mass univariate linear models                                                      |
-| 11:30 - 11:45 | ☕ Break                                                                            |
-| 11:45 - 12:45 | Continuous predictors & marginal effects                                           |
-| 12:45 - 13:45 | 🥙 Lunch break                                                                      |
-| 13:45 - 14:30 | Non-linear effects                                                                 |
-| 14:30 - 14:45 | ☕ Break                                                                            |
-| 14:45 - 15:45 | Overlap correction & multiple event types                                          |
-| 15:45 - 16:00 | ☕ Break                                                                            |
-| 16:00 - 16:30 | Lightning talks: UnfoldMakie.jl, UnfoldSim.jl, UnfoldBIDS.jl, UnfoldMixedModels.jl |
-| 16:30 - 16:45 | Wrap-up                                                                            |
+| 9:00 - 11:00 | Theory A (Linear Regression) |
+| 11:00 - 11:15 | ☕ Break                                                                            |
+| 11:15 - 13:00 | Theory B (probably still Linear Regression, maybe LMMs)    |
+| 13:00 - 14:00 | 🥙 Lunch break                         |
+| 14:00 - 15:00 | Theory C (LMMs)|
+| 15:00 - 15:15 | ☕ Break                                                                            |
+| 15:15 - 17:00 | First round of exercises|
+
+| Time          | Event                                                                              |
+|---------------|------------------------------------------------------------------------------------|
+| 9:00 - 11:00 | Theory D (LMMs) |
+| 11:00 - 11:15 | ☕ Break                                                                            |
+| 11:15 - 13:00 | Exercises |
+| 13:00 - 14:00 | 🥙 Lunch break                         |
+| 14:00 - 16:00 | Bring-your-own-dataset & discuss|
 
 : {.hover .striped}
 
 ------------------------------------------------------------------------
 
-::: {style="font-size: 80%; text-align: right;"}
-Each lesson consists of a lecture (\~ 30min) and a subsequent exercise (\~30min).
-:::
+### Bring-your-own-dataset & discuss?
+The general schedule is pretty flexible, we'll reach when we reach. Currently we expect to have some free time on friday which we can use to discuss your own datasets & special cases. 
