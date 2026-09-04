@@ -1,0 +1,30 @@
+project:
+  type: website
+  title: "LMM Workshop 2026"
+  resources:
+    - "assets"
+
+website:
+  title: "LMM Workshop 2026"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: program.qmd
+        text: Program
+      - href: installation.qmd
+        text: Installation
+      - href: material.qmd
+        text: Material
+    background: primary
+  page-footer:
+    left: |
+      ![](assets/unistuttgart_logo_englisch.png){width=60%}
+    right: |
+      ![](assets/logo_sfbtrr161.png){width=60%}
+
+format:
+  html:
+    theme: minty
+    css: styles.css
+    toc: true

@@ -1,0 +1,35 @@
+---
+title: "LMM Workshop 2026"
+---
+
+## Dates
+
+10 & 11 September 2026
+
+## Program
+
+t.b.a.
+
+## Organizers
+
+<style>
+  .round-image {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+  }
+</style>
+
+<table style="width: 100%; border-collapse: collapse; text-align: center;">
+  <tr>
+    <td style="width: 50%;">
+      <img src="assets/Ehinger_Benedikt.jpg" alt="Benedikt Ehinger" class="round-image"><br>
+      Benedikt Ehinger
+    </td>
+    <td style="width: 50%;">
+      <img src="assets/Sita_Friend_placeholder.svg" alt="Sita Friend" class="round-image"><br>
+      Sita Friend
+    </td>
+  </tr>
+</table>
