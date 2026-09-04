@@ -14,9 +14,9 @@ All times are in Central European Summer Time (CEST).
 | 11:00 - 11:15 | ☕ Break                                                                            |
 | 11:15 - 13:00 | Theory B (probably still Linear Regression, maybe LMMs)    |
 | 13:00 - 14:00 | 🥙 Lunch break                         |
-| 14:00 - 15:00 | Theory C (LMMs)|
+| 14:00 - 15:00 | First round of exercises|
 | 15:00 - 15:15 | ☕ Break                                                                            |
-| 15:15 - 17:00 | First round of exercises|
+| 15:15 - 17:00 | Theory C (LMM's)
 
 | Time          | Event                                                                              |
 |---------------|------------------------------------------------------------------------------------|

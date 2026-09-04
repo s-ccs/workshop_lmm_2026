@@ -25,6 +25,8 @@ website:
 
 format:
   html:
-    theme: minty
+    theme: 
+      - minty
+      - theme.sccs
     css: styles.css
     toc: true
