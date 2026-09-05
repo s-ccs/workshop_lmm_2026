@@ -31,11 +31,11 @@ set_theme!(Theme(
     font = "Helvetica",
 ))
 
-nboot = 200
+nboot = 200;
 ```
 
-# bla
-## Slides & my Presentation style {.titleslide .level1}
+
+# Slides & my Presentation style
 
 
 
@@ -60,6 +60,7 @@ Notes are on :)
 </aside>
 
 
+# Why repeated measures?
 ## Repeated measures
 
 ```{julia}
@@ -78,7 +79,7 @@ dat = vcat(dat,
 )
 dat.group = string.(dat.group)
 
-data(dat) * mapping(:group, :response) * visual(Scatter; markersize=4px) |> draw
+data(dat) * mapping(:group, :response) * visual(Scatter; markersize=4) |> draw
 current_figure()
 ```
 It looks like there is no difference between groups?
@@ -97,7 +98,7 @@ conn = DataFrame(subject=string.(dat.subject), group=dat.group, response=dat.res
 
 datDiff = DataFrame(difference=dat.response[dat.group.=="2"] .- dat.response[dat.group.=="1"])
 
-data(dat) * mapping(:group, :response) * visual(Scatter; markersize=4px) |> draw
+data(dat) * mapping(:group, :response) * visual(Scatter; markersize=4) |> draw
 data(conn) * mapping(:group, :response, color=:subject) * visual(Lines) |> x->draw!(current_axis(), x)
 current_figure()
 
@@ -114,9 +115,7 @@ Each subject is measured in multiple conditions. This allows us to remove indivi
 
 data(datDiff) * mapping(:difference) * histogram(bins=20) |> draw
 ```
-Between-Subject variability can be removed by repeated measures.
-
-**Never analyze repeated measures data without taking repeated measures into account** (Disaggregation, Pseudoreplication)
+Between-Subject variability can be removed by repeated measures. This can result in higher power!
 
 
 <aside  class="notes">
@@ -153,26 +152,24 @@ df = vcat(
     DataFrame(x=x, y=pdf.(Normal(totalMean, totalSD), x), type="estimated Population dissaggregate"),
     DataFrame(x=x, y=pdf.(Normal(totalSubjectMean, totalSubjectSDaccross), x), type="estimated Population aggregate first")
 )
-df.y ./= maximum(df.y, dims=1)
+df.y ./= maximum(df.y, dims=1);
 ```
 
 ```{julia}
 #| echo: false
 #| fig-width: 8
 
-fig = Figure(size=(600, 400))
-ax = Axis(fig[1,1], yticks=[])
 
-# Subject points
-data(level1) * mapping(:response, color=:subject) * visual(Scatter) |> draw
+f,ax,h = scatter(level2,zeros(length(level2)),markersize=15,color=:black)
 # Subject means as black points
 #data(subjectMean) * mapping(:resp_mean) * visual(Scatter) |> x->draw!(current_axis(), x)
 # Mean line
-vlines!(ax, [mean(subjectMean.resp_mean)], color=:black, linewidth=2)
-
-current_figure()
+vlines!([mean(subjectMean.resp_mean)], color=:black, linewidth=2)
+hideydecorations!(ax)
+ylims!(-0.03,0.3)
+hidespines!(ax)
+f
 ```
-Black = mean of the subject.
 
 $n_S=5$ subjects 
 
@@ -183,15 +180,9 @@ $n_S=5$ subjects
 #| echo: false
 #| fig-width: 8
 
-fig = Figure(size=(600, 400))
-ax = Axis(fig[1,1], yticks=[])
-
-data(level1) * mapping(:response, color=:subject) * visual(Scatter) |> draw
-#data(subjectMean) * mapping(:resp_mean) * visual(Scatter) |> x->draw!(current_axis(), x)
-vlines!(ax, [mean(subjectMean.resp_mean)], color=:black, linewidth=2)
-
-samp = df[df.type .== "Samplingdistribution of subject-means", :]
-lines!(ax, samp.x, samp.y[:,1], linewidth=2)
+_df =  df[df.type .=="Samplingdistribution of subject-means",:]
+_df.y = _df.y ./ max(_df.y)
+lines!(_df.x,_df.y,color=:purple)
 
 current_figure()
 ```
@@ -206,15 +197,18 @@ The sampling distribution represents the distribution of mean values we would ge
 ```{julia}
 #| echo: false
 #| fig-width: 8
+level1.y = rand(size(level1,1)).*0.05
 
-fig = Figure(size=(600, 400))
-ax = Axis(fig[1,1], yticks=[])
+f,ax,h = scatter(level2,zeros(length(level2)),markersize=15,color=:black)
 
-data(level1) * mapping(:response, color=:subject) * visual(Scatter) |> draw
-data(subjectMean) * mapping(:resp_mean) * visual(Scatter) |> x->draw!(current_axis(), x)
-vlines!(ax, [mean(subjectMean.resp_mean)], color=:black, linewidth=2)
+data(level1) * mapping(:response,:y,color=:subject) * visual(Scatter) |> x->draw!(current_axis(), x)
+# Mean line
+vlines!([mean(subjectMean.resp_mean)], color=:black, linewidth=2)
+hideydecorations!(ax)
+ylims!(-0.03,0.3)
+hidespines!(ax)
 
-current_figure()
+f
 ```
 with $n_T =15$ trials
 <aside class="notes">
@@ -226,19 +220,12 @@ But what if I tell you that we actually have multiple trials per this black data
 ```{julia}
 #| echo: false
 #| fig-width: 8
+_df =  df[df.type .=="Samplingdistribution of data-points",:]
+_df.y = _df.y ./ max(_df.y)
+lines!(_df.x,_df.y./5)
 
-fig = Figure(size=(600, 400))
-ax = Axis(fig[1,1], yticks=[])
 
-data(level1) * mapping(:response, color=:subject) * visual(Scatter) |> draw
-
-#data(subjectMean) * mapping(:resp_mean) * visual(Scatter) |> x->draw!(current_axis(), x)
-vlines!(ax, [mean(subjectMean.resp_mean)], color=:black, linewidth=2)
-
-samp = df[df.type .== "Samplingdistribution of data-points", :]
-lines!(ax, samp.x, samp.y[:,1], linewidth=2)
-
-current_figure()
+f
 ```
 This sampling distribution reflects these exact 5 subjects. But does not generalize!
 
@@ -253,27 +240,19 @@ The sampling distribution is much smaller now, assumed we forgot that the data a
 #| echo: false
 #| fig-width: 8
 
-fig = Figure(size=(600, 400))
-ax = Axis(fig[1,1], yticks=[])
+_df =  df[df.type .=="Samplingdistribution of subject-means",:]
+_df.y = _df.y ./ max(_df.y)
+lines!(_df.x,_df.y,color=:purple)
 
-data(level1) * mapping(:response, color=:subject) * visual(Scatter) |> draw
-#data(subjectMean) * mapping(:resp_mean) * visual(Scatter) |> x->draw!(current_axis(), x)
-vlines!(ax, [mean(subjectMean.resp_mean)], color=:black, linewidth=2)
-
-samp1 = df[df.type .== "Samplingdistribution of data-points", :]
-samp2 = df[df.type .== "Samplingdistribution of subject-means", :]
-lines!(ax, samp1.x, samp1.y[:,1], linewidth=2, color=:purple)
-lines!(ax, samp2.x, samp2.y[:,1], linewidth=2, color=:pink)
-
-current_figure()
+f
 ```
 <small>(<span style="color:#F660AB">pink</span> for aggregate, <span style="color:#7D0552">purple</span> for disaggregate).
-There is a strong allure to choose the purple one, easier to get significant results! </small>
+There is a strong allure to choose the smaller one, easier to get significant results! </small>
 
 $$n_{subject}(aggregate) = df+1 = 5$$
-$$n_{subject}(pseudoreplication) = df+1= 5*5 = 25$$
+$$n_{subject}(pseudoreplication) = df+1= 15*5 = 75$$
 
-DONT DO THIS, YOU KNOW (now) BETTER
+**Never analyze repeated measures data without taking repeated measures into account** (Disaggregation, Pseudoreplication).
 
 <aside class="notes">
 The $n_{subject}$ are interesting because they directly relate to the sampling distribution ($SE =\frac{\sigma}{\sqrt n}$) that is, the higher the estimated number of subjects (or related, degree of freedoms), the smaller the SE, the more "sure" we are.
@@ -311,7 +290,7 @@ function genDat(sd1, sd2; plotDist=false)
     if plotDist
         ## Add density lines if requested
     end
-    
+    ylims!(current_axis(),-50,60)
     return (level1, current_figure())
 end
 
@@ -374,7 +353,7 @@ end
 
 data(level1) * mapping(:subject, :response, color=:subject) * visual(Beeswarm; algorithm=:pseudorandom) |> draw
 subj_means = combine(groupby(level1, :subject), :response => mean => :m)
-data(subj_means) * mapping(:subject, :m) * visual(Scatter; markersize=6px, color=:black) |> x->draw!(current_axis(), x)
+data(subj_means) * mapping(:subject, :m) * visual(Scatter; markersize=6, color=:black) |> x->draw!(current_axis(), x)
 current_figure()
 ```
 
@@ -621,7 +600,6 @@ It is statistically possible and accurate (but not as powerful as mixed models),
 
 # The LMM
 
-
 ## One solution
 
 <img src="images/mm_figures-01.svg" width='100%'>
@@ -848,7 +826,7 @@ For further details see Zuur 2009 ("Mixed Effects Models and Extensions in Ecolo
 
 ```{julia}
 #| fig-height: 4
-samp = parametricbootstrap(1_000,mres1)
+samp = parametricbootstrap(1_000,mres)
 
 f,ax,h = CairoMakie.hist(samp.tbl.σ; axis=(xlabel="Parametric bootstrap estimates of σ₁",))
 CairoMakie.hist(f[1,2],samp.tbl.β1; axis=(xlabel="Parametric bootstrap estimates of contrast",))
@@ -1074,7 +1052,7 @@ A very useful thing of shrinkage gets obvious, when we think outside of the cont
 
 ```{julia}
 using MixedModelsMakie
-shrinkageplot(mres1;size=(400,400))
+shrinkageplot(mres)
 ```
 
 <aside class="notes">
@@ -1157,7 +1135,7 @@ re_fits = ranef(m_shrink)
 
 data(allDat) * mapping(:difficulty, :y) * visual(Scatter; alpha=0.3) |> draw
 data(allDat) * mapping(:difficulty, :y, color=:subject) * linear() |> x->draw!(current_axis(), x)
-axis.title="@formula(y ~ 1 + diff + (1 + diff | subject))"
+current_axis().title="@formula(y ~ 1 + diff + (1 + diff | subject))"
 current_figure()
 ```
 
@@ -1184,6 +1162,7 @@ We move around the multivariate normal distribution to get an intuition what the
 ## The multivariate normal II
 
 :::: {layout-ncol=2}
+
 ::: {column}
 
 <img src="images/gaus2d_corr_0.svg" width="100%">
@@ -1251,9 +1230,10 @@ In the mixed model context we can add this correlation value, i.e. we try to est
 ## Naming is a bit messy
 
 :::: {layout-ncol=2}
+
 ::: {column}
 
-### Random/Fixed Coefficients
+**Random/Fixed Coefficients**
   - **Random intercept**
      - `(1 | subject)`: Different offset for each subject
   - **Random slope**
@@ -1264,10 +1244,10 @@ In the mixed model context we can add this correlation value, i.e. we try to est
      - exactly the same for all subjects
 
 :::
+
 ::: {column}
 
-
-### Random/Fixed Variables
+**Random/Fixed Variables**s
   - **Random variable**
      - Instance $\in$ population, e.g. subjects, images, words
   - **Fixed variable**
@@ -1282,12 +1262,14 @@ In the mixed model context we can add this correlation value, i.e. we try to est
 
 :::
 ::::
+
 <aside class="notes">
 This mix of terminology is unfortunate. The first divide is between coefficients and variables, they describe very different things. Then the difference between fixed/random coefficients is less clear. Most often the question "should I model this as a random effect" relates to Random Variable vs. "Fixed Variable".
 </aside>
 
 
 # Convergence & Singularity
+
 ## A more complex model
 ```{julia}
 #| echo: false
@@ -1490,12 +1472,12 @@ meanList = combine(groupby(dat2, :condition), :y => mean => :m)
 #| fig-height: 4
 
 # Plot by subject
-data(dat2) * mapping(:subject, :y, color=:condition) * visual(Scatter; markersize=3px) |> draw
+data(dat2) * mapping(:subject, :y, color=:condition) * visual(Scatter; markersize=3) |> draw
 current_figure()
 
 # Plot by condition
-data(dat2) * mapping(:condition, :y, color=:subject) * visual(Lines; alpha=0.5, linewidth=1px) |> x->draw!(current_axis(), x)
-data(dat2) * mapping(:condition, :y, color=:condition) * visual(Scatter; markersize=3px) |> x->draw!(current_axis(), x)
+data(dat2) * mapping(:condition, :y, color=:subject) * visual(Lines; alpha=0.5) |> x->draw!(current_axis(), x)
+data(dat2) * mapping(:condition, :y, color=:condition) * visual(Scatter; markersize=3) |> x->draw!(current_axis(), x)
 current_figure()
 
 # Model summary

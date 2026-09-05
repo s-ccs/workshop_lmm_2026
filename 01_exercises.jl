@@ -20,7 +20,6 @@ end
 # ╔═╡ 77162f08-750f-48b0-a13b-db80f3dd004e
   using Effects
 
-
 # ╔═╡ 939fdd7e-d43c-4153-9095-f8a42d87d405
 display_as(x) = DisplayAs.Text(x)
 
@@ -117,7 +116,7 @@ PlutoTeachingTools.question_box(md"""
 PlutoTeachingTools.hint(md"""
   **Hint**:
   - Use `groupby(d_filtered, :!!!)` to loop per participant
-  - Use `mad(x)` from StatsBase for the MAD
+  - Use `mad(x)` (from `StatsBase`) for the MAD
   - Assign boolean: `x .< (median - 2*mad) .|| x .> (median + 2*mad)`
 
   """)
@@ -567,6 +566,9 @@ Visualize the interaction using effects (`using Effects`)
 # ╔═╡ ec8f1d5e-ed36-4a43-add3-85d2b56a8ea5
 begin
   eff = effects(Dict(:probability_abs => 0:10:50, :arrangement => ["Ordered", "Random"]), m_int)
+
+    #  eff = effects(Dict(:probability_abs => !!!, :arrangement => !!!), m_int)
+    
   data(eff) * mapping(:probability_abs, :decisionTime, color=:arrangement) * visual(ScatterLines) |> draw
 
   current_figure()
@@ -574,6 +576,13 @@ end
 
 # ╔═╡ 9446fd59-f0f0-4933-887e-cd36540e5641
 question_box("Do you observe an interaction of arrangement and probability_abs?")
+
+# ╔═╡ 6a0e329c-83ae-40dd-8205-69f3d45b2daa
+answer_box("""
+		     ```
+		   eff = effects(Dict(:probability_abs => 0:10:50, :arrangement => ["Ordered", "Random"]), m_int)
+		   ```
+		   """)
 
 # ╔═╡ c7e12506-794d-4e7e-9057-d7366d471c56
 md"""
@@ -594,7 +603,7 @@ lrtest(m_int, m_main)
 
 # ╔═╡ 59b58890-f272-4c54-a151-3f39bf7e2cae
 md"""
-## Exercise X: Different categorical coding schemes
+## Exercise 6: Different categorical coding schemes
 We have been ignoring the intercept a little bit, let's have a look. Take `m_int` for now on (the model with interaction).
 
 **Intercept**: $(Int(round(coef(m_int)[1])))
@@ -609,6 +618,14 @@ question_box("""
 - What does this value correspond to? How would you calculate it from the actual data?
 """)
 
+
+# ╔═╡ 39f17e22-fc79-43ed-b95b-e513f1989a7c
+answer_box("""
+As discussed in the lecture, the intercept always represents what happens when everything is 0. This does not only mean the fixed effects, but also the random effects - effectively you are testing what happens if the most average subject (all random effects are 0) would take part in your study!
+
+You could try to calculate it by subsetting the data for all predictors to 0 (e.g. the reference group for arrangement, 0 for probability_abs etc.), but likely the exact number will be different, because subjects have various number of trials etc. - not straight forward to calculate as from an linear model
+		   
+		   """)
 
 # ╔═╡ 9abe9b07-1108-4429-b23e-4bf3152ae30c
 md"""
@@ -634,7 +651,13 @@ f_dummy = @formula decisionTime ~ 1 + arrangement * probability_abs + (1 + arran
 lmm(f_dummy, d_clean)
 
 # ╔═╡ 414fceee-b97e-4526-b8d9-cf05049e4ebd
+# lmm(f_dummy, d_clean; contrasts=!!!)
 lmm(f_dummy, d_clean; contrasts=Dict(:arrangement=>DummyCoding(base="Random")))
+
+# ╔═╡ 51ffe48c-915f-4f55-bb08-5cac11fc6da3
+answer_box("""
+		   `lmm(f_dummy, d_clean; contrasts=Dict(:arrangement=>DummyCoding(base="Random")))`
+		   """)
 
 # ╔═╡ 07b578ea-0f90-4ace-8cbc-91944f889cda
 md"""
@@ -647,7 +670,13 @@ question_box("""
 Use `EffectsCoding()` to declare an effect coded effect of `:arrangement` """)
 
 # ╔═╡ d31683ef-e564-4380-917a-e8baad847eb6
+#lmm(f_dummy, d_clean; contrasts=!!!)
 lmm(f_dummy, d_clean; contrasts=Dict(:arrangement=>EffectsCoding()))
+
+# ╔═╡ 60bb2cac-bfdc-480d-a47d-f10dac2f6caa
+answer_box("""
+`lmm(f_dummy, d_clean; contrasts=Dict(:arrangement=>EffectsCoding()))`
+		   """)
 
 # ╔═╡ f4ebf000-3b48-4ac5-b188-fb0fe952e16b
 # ---
@@ -693,8 +722,22 @@ question_box(md"""
 Remember to now think both of `(1 + ... |subject)` as well as `(1 + ... |item)`!!
 			 """)
 
+# ╔═╡ 4b7e6190-e089-448c-be92-8c9b9ba02539
+PlutoTeachingTools.answer_box("""
+- Fixed effects should be all factors you want to model, where you dont want to assume that they are 0. E.g. here `iconicity` & `arrangement`
+- Random slopes should be everything that varies within a random grouping variable. 
+							  
+Thus for **subject:** `arrangement` and `iconicity`, as each subject sees multiple levels of both.
+
+For **item**: only only `arrangement` makes sense, because we have the same pictures of houses in both levels, but we dont have the same houses in `iconicity`.
+		   
+""")
+
 # ╔═╡ eceaed34-060f-47b3-8085-c6c09c5d61b6
 #f_item = @formula decisionTime ~ ... 
+
+# ╔═╡ 56ef29b9-6fd4-4e4a-becb-5bd88871fcb9
+#f_noitem = @formula decisionTime ~ ... 
 
 # ╔═╡ 27d2ad90-ecd8-42e7-b552-85b7653b595c
 md"""
@@ -703,7 +746,6 @@ Let's have a quick look at the actual data
 """
 
 # ╔═╡ 903ce2d5-4d7d-4fec-9890-790acf9d9e37
-#data(...) * mapping(...) * (visual(...) + smooth()) |> draw
 data(d_sim) * mapping(:iconicity, :decisionTime, color=:arrangement) *
       (visual(Beeswarm; algorithm=:quasirandom, alpha=0.1) )|> draw
 
@@ -734,20 +776,16 @@ question_box("""
 
 # ╔═╡ fe88bcbc-6070-43b1-ae69-f4ea0f464186
 begin
-    m_noitem = lmm(@formula(decisionTime ~ iconicity*arrangement +
-    (1 + iconicity*arrangement | participant_id)),
-    d_sim)
-    
-    m_item = lmm(@formula(decisionTime ~ iconicity*arrangement +
-    (1 + iconicity*arrangement | participant_id) +
-    (1 + arrangement | item)),  
-    d_sim)
+    m_item = lmm(f_item, d_sim)
+    m_noitem = lmm(f_noitem, d_sim)
 end
 
 # ╔═╡ f23e3380-47a1-4240-aafe-fb0c4759b09f
+# VarCorr(!!!)
 VarCorr(m_item)
 
 # ╔═╡ ac8b3755-b276-47b9-97ae-0efee3d00770
+# lrtest(!!!,!!!)
 lrtest(m_noitem, m_item)
 
 # ╔═╡ 7fc6c4ed-2610-4ced-9ed9-cec74eada4d5
@@ -774,24 +812,32 @@ d_subset = subset(d_clean,:participant_id=> x-> x.<=15);
 m_subset = lmm(@formula(decisionTime ~ arrangement*probability_abs + (1+arrangement*probability_abs|participant_id)),d_subset)
 
 # ╔═╡ 9c69199e-5637-4af7-9664-720848078109
+#VarCorr(!!!)
 VarCorr(m_subset)
 
 # ╔═╡ 6c57e246-bf26-4bd1-a7b0-1ad386a19990
+# MixedModels.rePCA(!!!)
 MixedModels.rePCA(m_subset)
 
 # ╔═╡ eb8ee8b6-8cb0-4cbb-8132-dd512d7cb661
-m_subset_simple = lmm(@formula(decisionTime ~ arrangement*probability_abs + (1+arrangement*probability_abs|participant_id)),d_subset)
+# m_subset_simplified = lmm(@formula(decisionTime ~ !!!),d_subset)
+m_subset_simplified = lmm(@formula(decisionTime ~ arrangement*probability_abs + (1+arrangement*probability_abs|participant_id)),d_subset)
+
+# ╔═╡ 45dcfe36-ebe0-4773-b4f5-bdda6641dbaa
+#VarCorr(!!!)
+VarCorr(m_subset)
 
 # ╔═╡ 95dc2cf3-3b07-4438-95a2-8f5f857b3107
+# MixedModels.rePCA(!!!)
 MixedModels.rePCA(m_subset_simple)
-
-# ╔═╡ 912b794a-18f4-4471-91e5-01e8ab412edf
-d_clean
 
 # ╔═╡ 86599e5a-6d28-4ab2-97d3-3751258feccb
 question_box("""
 Instead relying on your semi-subjective singularity-detection, you can also statistical test whether to keep an effect with likelihood-ratio tests. Can you confirm your earlier conclusions?			 
 			 """)
+
+# ╔═╡ 738a80f1-7b16-465a-9a2a-d676558a43b8
+# lrtest(!!!,!!!)
 
 # ╔═╡ 8e3311d9-c4d9-4ee1-a97a-260d82855ddb
 md"""
@@ -837,14 +883,14 @@ CairoMakie = "~0.15.13"
 CategoricalArrays = "~1.1.1"
 DataFrames = "~1.8.2"
 DisplayAs = "~0.1.6"
-Distributions = "~0.25.130"
+Distributions = "~0.25.131"
 Effects = "~1.7.1"
-MixedModels = "~5.8.0"
+MixedModels = "~5.8.2"
 MixedModelsExtras = "~2.3.2"
 MixedModelsMakie = "~0.4.12"
 PlutoTeachingTools = "~0.4.7"
 PlutoUI = "~0.7.83"
-StatsBase = "~0.34.12"
+StatsBase = "~0.34.13"
 SwarmMakie = "~0.2.1"
 """
 
@@ -854,7 +900,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.12.7"
 manifest_format = "2.0"
-project_hash = "2109e24677fa93bec03f135de0688ca8f050f62b"
+project_hash = "6bc5c2f3ecbfc2b8ae008d4270d58c197ccf946f"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1117,9 +1163,9 @@ version = "0.4.6"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
-git-tree-sha1 = "962834c22b66e32aa10f7611c08c8ca4e20749a9"
+git-tree-sha1 = "970758a3d591a2a5c2a907c53f2e2f8c1b1d3537"
 uuid = "944b1d66-785c-5afd-91f1-9de20f533193"
-version = "0.7.8"
+version = "0.7.9"
 
 [[deps.CodecZstd]]
 deps = ["TranscodingStreams", "Zstd_jll"]
@@ -1171,9 +1217,10 @@ uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
 version = "1.1.0"
 
 [[deps.CommonSolve]]
-git-tree-sha1 = "f54afab101687a7049833d07636418a83e9a250b"
+deps = ["PrecompileTools"]
+git-tree-sha1 = "6c389fa857f6ca5a95474b52a52023fd77f24cb7"
 uuid = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
-version = "0.2.12"
+version = "0.2.14"
 
 [[deps.CommonSubexpressions]]
 deps = ["MacroTools"]
@@ -1182,9 +1229,10 @@ uuid = "bbf7d656-a473-5ed7-a52c-81e309532950"
 version = "0.3.1"
 
 [[deps.CommonWorldInvalidations]]
-git-tree-sha1 = "cde75cb34c9ee07b4c37981b0f32378d0dc19ffe"
+deps = ["PrecompileTools"]
+git-tree-sha1 = "bc209b1a67dd03551fe305d72e88128764b89cf5"
 uuid = "f70d9fcc-98c5-4d4a-abd7-e4cdeebd8ca8"
-version = "1.1.1"
+version = "1.2.0"
 
 [[deps.Compat]]
 deps = ["TOML", "UUIDs"]
@@ -1218,9 +1266,9 @@ version = "0.1.8"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
-git-tree-sha1 = "21d088c496ea22914fe80906eb5bce65755e5ec8"
+git-tree-sha1 = "3c9be947934c38475bafe822c6d61aaed17f0738"
 uuid = "f0e56b4a-5159-44fe-b623-3e5288b988bb"
-version = "2.5.1"
+version = "2.6.0"
 
 [[deps.ConstructionBase]]
 git-tree-sha1 = "b4b092499347b18a015186eae3042f72267106cb"
@@ -1335,9 +1383,9 @@ version = "1.11.0"
 
 [[deps.Distributions]]
 deps = ["AliasTables", "FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "Roots", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns"]
-git-tree-sha1 = "d2facc77c08c1c2bfb1a77c148edd05b3db5410b"
+git-tree-sha1 = "a958ab3a40c755563f5e1405c0846cb0446bf19d"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.25.130"
+version = "0.25.131"
 
     [deps.Distributions.extensions]
     DistributionsChainRulesCoreExt = "ChainRulesCore"
@@ -1391,9 +1439,9 @@ version = "2.2.9"
 
 [[deps.Expat_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "e6c4a6407a949e79a9d3f249bf49e6987c80e01f"
+git-tree-sha1 = "f4d39eee89f1e58c26bf447f1d4156c0125d6838"
 uuid = "2e619515-83b5-522b-bb60-26c02a35a201"
-version = "2.8.2+0"
+version = "2.8.3+0"
 
 [[deps.ExprTools]]
 git-tree-sha1 = "d2e49e7efd29719d6f28b891b0e0e159daa9d2b4"
@@ -1504,9 +1552,9 @@ version = "0.4.3"
 
 [[deps.ForwardDiff]]
 deps = ["CommonSubexpressions", "DiffResults", "DiffRules", "LinearAlgebra", "LogExpFunctions", "NaNMath", "Preferences", "Printf", "Random", "SpecialFunctions"]
-git-tree-sha1 = "73d5084cae45f9d0857776ad78cf303fec09eb02"
+git-tree-sha1 = "1b86cca764a61dcac4fef4c5e16e378e5ed6953c"
 uuid = "f6369f11-7733-5829-9624-2563aa707210"
-version = "1.4.3"
+version = "1.4.5"
 weakdeps = ["StaticArrays"]
 
     [deps.ForwardDiff.extensions]
@@ -1548,9 +1596,10 @@ uuid = "38e38edf-8417-5370-95a0-9cbb8c7f171a"
 version = "1.9.5"
 
 [[deps.Gamma]]
-git-tree-sha1 = "86f86b6168a016ed88e4ae4e64577b98c3b59e8e"
+deps = ["LogExpFunctions"]
+git-tree-sha1 = "becc397f7cfb06e343496ae6ffb04818a851da51"
 uuid = "a0844989-3bd2-4988-8bea-c9407ab0941b"
-version = "1.1.0"
+version = "1.2.0"
 
 [[deps.GeoFormatTypes]]
 git-tree-sha1 = "7528a7956248c723d01a0a9b0447bf254bf4da52"
@@ -1598,9 +1647,9 @@ version = "5.2.3+0"
 
 [[deps.Glib_jll]]
 deps = ["Artifacts", "GettextRuntime_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libiconv_jll", "Libmount_jll", "PCRE2_jll", "Zlib_jll"]
-git-tree-sha1 = "24f6def62397474a297bfcec22384101609142ed"
+git-tree-sha1 = "090526e65de8f69648ac156daae153de8b56df62"
 uuid = "7746bdde-850d-59dc-9ae8-88ece973131d"
-version = "2.86.3+0"
+version = "2.88.3+0"
 
 [[deps.Graphics]]
 deps = ["Colors", "LinearAlgebra", "NaNMath"]
@@ -1628,9 +1677,9 @@ version = "8.5.1+0"
 
 [[deps.HypergeometricFunctions]]
 deps = ["Gamma", "LinearAlgebra"]
-git-tree-sha1 = "18d7deab5fb0440dc6a7b6993c5c27b25420de10"
+git-tree-sha1 = "31bb6c92405c084617facc1d7ed9eb6c402d061e"
 uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
-version = "0.3.29"
+version = "0.3.30"
 
 [[deps.Hyperscript]]
 deps = ["Test"]
@@ -1739,9 +1788,9 @@ weakdeps = ["ForwardDiff", "Unitful"]
 
 [[deps.IntervalArithmetic]]
 deps = ["CRlibm", "CoreMath", "MacroTools", "OpenBLASConsistentFPCSR_jll", "Printf", "Random", "RoundingEmulator"]
-git-tree-sha1 = "c3ee408ae340565f41699e3a3fa1053698c7626e"
+git-tree-sha1 = "ff294afb9a15d31d8d7422da138844641a73135f"
 uuid = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
-version = "1.0.10"
+version = "1.0.11"
 
     [deps.IntervalArithmetic.extensions]
     IntervalArithmeticArblibExt = "Arblib"
@@ -1822,9 +1871,9 @@ version = "1.8.0"
 
 [[deps.JSON]]
 deps = ["Dates", "Logging", "Parsers", "PrecompileTools", "StructUtils", "UUIDs", "Unicode"]
-git-tree-sha1 = "c89d196f5ffb64bfbf80985b699ea913b0d2c211"
+git-tree-sha1 = "c7345ab1a7ca4dc8a02c9f6510da0d9857bbe513"
 uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
-version = "1.6.1"
+version = "1.7.1"
 weakdeps = ["ArrowTypes"]
 
     [deps.JSON.extensions]
@@ -1848,9 +1897,9 @@ version = "0.1.6"
 
 [[deps.JpegTurbo_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "1dae3057da6f2b9c857afef03177bbdc7c4afe92"
+git-tree-sha1 = "037babc10853eeb8e585418922246cb97b8e5b74"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
-version = "3.2.0+0"
+version = "3.2.0+1"
 
 [[deps.JuliaSyntaxHighlighting]]
 deps = ["StyledStrings"]
@@ -1882,9 +1931,9 @@ uuid = "1d63c593-3942-5779-bab2-d838dc0a180e"
 version = "22.1.7+0"
 
 [[deps.LaTeXStrings]]
-git-tree-sha1 = "dda21b8cbd6a6c40d9d02a73230f9d70fed6918c"
+git-tree-sha1 = "f88f3ccef05a6a72a0cf0ed417c8fd68530f4ab2"
 uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
-version = "1.4.0"
+version = "1.4.1"
 
 [[deps.Latexify]]
 deps = ["Formatting", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "Printf", "Requires"]
@@ -2045,9 +2094,9 @@ version = "1.2.0"
 
 [[deps.MixedModels]]
 deps = ["Arrow", "BSplineKit", "Compat", "DataAPI", "Distributions", "GLM", "IrrationalConstants", "JSON3", "LinearAlgebra", "Markdown", "MixedModelsDatasets", "NLopt", "PooledArrays", "PrecompileTools", "Printf", "ProgressMeter", "Random", "RectangularFullPacked", "RegressionFormulae", "SparseArrays", "StaticArrays", "Statistics", "StatsAPI", "StatsBase", "StatsModels", "StructTypes", "Tables", "TypedTables"]
-git-tree-sha1 = "177c0170b8ef60aa1af5ab40019ff717cd0199f3"
+git-tree-sha1 = "369ba0da8c5370ec1bc8b123d5fb594398cb30e6"
 uuid = "ff71e718-51f3-5ec2-a782-8ffcbfa3c316"
-version = "5.8.0"
+version = "5.8.2"
 
     [deps.MixedModels.extensions]
     MixedModelsFiniteDiffExt = ["FiniteDiff"]
@@ -2061,9 +2110,9 @@ version = "5.8.0"
 
 [[deps.MixedModelsDatasets]]
 deps = ["Arrow", "DelimitedFiles", "Downloads", "Markdown", "ProgressMeter", "SHA", "Scratch"]
-git-tree-sha1 = "8ee7a2b0d53a810a7045c12f54ed848db4e6c839"
+git-tree-sha1 = "1ad23c8602dbd5ea3b9143887cdd72ae98f4270f"
 uuid = "7e9fb7ac-9f67-43bf-b2c8-96ba0796cbb6"
-version = "0.2.1"
+version = "0.2.2"
 
 [[deps.MixedModelsExtras]]
 deps = ["GLM", "LinearAlgebra", "MixedModels", "Statistics", "StatsBase", "StatsModels", "Tables"]
@@ -2099,9 +2148,9 @@ version = "2025.11.4"
 
 [[deps.MuladdMacro]]
 deps = ["PrecompileTools"]
-git-tree-sha1 = "e8dcbeef032ba2f9051a44ac22b4e54e3a1a0099"
+git-tree-sha1 = "283bf85d4a767481dd924dff0eee1735e95f449e"
 uuid = "46d2c3a1-f734-5fdb-9937-b9b9aeba4221"
-version = "0.2.6"
+version = "0.2.7"
 
 [[deps.NLopt]]
 deps = ["CEnum", "NLopt_jll"]
@@ -2181,9 +2230,9 @@ version = "0.3.3"
 
 [[deps.OpenEXR_jll]]
 deps = ["Artifacts", "Imath_jll", "JLLWrappers", "Libdl", "Zlib_jll"]
-git-tree-sha1 = "0d621a4beb5e48d195f907c3c5b0bea285d9ff9d"
+git-tree-sha1 = "fd09db52a90efaae33a3d91f0bc71a22c429e8f1"
 uuid = "18a262bb-aa17-5467-a713-aee519bc75cb"
-version = "3.4.13+0"
+version = "3.4.14+0"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -2219,9 +2268,9 @@ version = "10.44.0+1"
 
 [[deps.PDMats]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
-git-tree-sha1 = "26766d4b5f1a410c218a19b85a672c6edb693c65"
+git-tree-sha1 = "123266c25174ef6c8d4718920abc206452cf8de6"
 uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
-version = "0.11.40"
+version = "0.11.41"
 weakdeps = ["StatsBase"]
 
     [deps.PDMats.extensions]
@@ -2247,15 +2296,15 @@ version = "0.5.12"
 
 [[deps.Pango_jll]]
 deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "FriBidi_jll", "Glib_jll", "HarfBuzz_jll", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "58e5ed5e386e156bd93e86b305ebd21ac63d2d04"
+git-tree-sha1 = "7126b66b721a605a2fec966a2874c5ed53258eb3"
 uuid = "36c8627f-9965-5494-a995-c6b170f724f3"
-version = "1.57.1+0"
+version = "1.58.0+0"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "32a4e09c5f29402573d673901778a0e03b0807b9"
+git-tree-sha1 = "3de8f5e6e90ebfa8d6d1f86997d6cdcd6a912ff3"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.8.6"
+version = "2.8.7"
 
 [[deps.Pixman_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "LLVMOpenMP_jll", "Libdl"]
@@ -2321,9 +2370,9 @@ version = "1.5.2"
 
 [[deps.PrettyTables]]
 deps = ["Crayons", "LaTeXStrings", "Markdown", "PrecompileTools", "Printf", "REPL", "Reexport", "StringManipulation", "Tables"]
-git-tree-sha1 = "7cf039cf79bb41afda7336edf2f3ca2115c44f76"
+git-tree-sha1 = "1b8aa19f229b1cea7fc93874a52e49db6a854450"
 uuid = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
-version = "3.4.2"
+version = "3.4.8"
 
     [deps.PrettyTables.extensions]
     PrettyTablesExcelExt = "XLSX"
@@ -2435,15 +2484,15 @@ version = "0.9.0"
 
 [[deps.Rmath_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "58cdd8fb2201a6267e1db87ff148dd6c1dbd8ad8"
+git-tree-sha1 = "6d40b2fe70437b01397d2a4d5b020008da4e7019"
 uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
-version = "0.5.1+0"
+version = "0.5.2+0"
 
 [[deps.Roots]]
 deps = ["Accessors", "CommonSolve", "Printf"]
-git-tree-sha1 = "7fb25a964849d90a0446366cdefca822e0e84900"
+git-tree-sha1 = "13a9e0164267bb9ebc55c1c5d72fceea8f09555b"
 uuid = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
-version = "3.0.6"
+version = "3.0.7"
 
     [deps.Roots.extensions]
     RootsChainRulesCoreExt = "ChainRulesCore"
@@ -2477,9 +2526,10 @@ uuid = "fdea26ae-647d-5447-a871-4b548cad5224"
 version = "3.7.2"
 
 [[deps.SciMLPublic]]
-git-tree-sha1 = "cf9aaf8b9ed5db993259ea8b24cf2b7ba9bd3b79"
+deps = ["PrecompileTools"]
+git-tree-sha1 = "74685afb51732a464fbce79a72708f7c4203ceb7"
 uuid = "431bcebd-1456-4ced-9d72-93c2757fff0b"
-version = "1.2.4"
+version = "1.3.0"
 
 [[deps.Scratch]]
 deps = ["Dates"]
@@ -2548,9 +2598,9 @@ version = "1.12.0"
 
 [[deps.SpecialFunctions]]
 deps = ["IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
-git-tree-sha1 = "6547cbdd8ce32efba0d21c5a40fa96d1a3548f9f"
+git-tree-sha1 = "429071b23f4c9a13fb6582f807cc2ef454082408"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
-version = "2.8.0"
+version = "2.9.0"
 weakdeps = ["ChainRulesCore"]
 
     [deps.SpecialFunctions.extensions]
@@ -2576,15 +2626,15 @@ version = "0.1.2"
 
 [[deps.Static]]
 deps = ["CommonWorldInvalidations", "IfElse", "PrecompileTools", "SciMLPublic"]
-git-tree-sha1 = "5ef96deaf82834d64e1456c6a6665ca4188afd48"
+git-tree-sha1 = "474a5283ad435618090122872eea6a8165ea6bcf"
 uuid = "aedffcd0-7271-4cad-89d0-dc628f76c6d3"
-version = "1.4.4"
+version = "1.4.6"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "PrecompileTools", "Random", "StaticArraysCore"]
-git-tree-sha1 = "246a8bb2e6667f832eea063c3a56aef96429a3db"
+git-tree-sha1 = "fac51faf3bb96e8bc0bf6f9f39ca4955652776bb"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.9.18"
+version = "1.9.19"
 weakdeps = ["ChainRulesCore", "Statistics"]
 
     [deps.StaticArrays.extensions]
@@ -2614,15 +2664,15 @@ version = "1.8.0"
 
 [[deps.StatsBase]]
 deps = ["AliasTables", "DataAPI", "DataStructures", "IrrationalConstants", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "e4d7a1a0edc20af42689ea6f4f3587a2175d50ee"
+git-tree-sha1 = "adb9da019510162e67a4493fc235c23203d8b09e"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-version = "0.34.12"
+version = "0.34.13"
 
 [[deps.StatsFuns]]
 deps = ["HypergeometricFunctions", "IrrationalConstants", "LogExpFunctions", "Reexport", "Rmath", "SpecialFunctions"]
-git-tree-sha1 = "770240df9a3b8888065046948f7a09b4e0f997d5"
+git-tree-sha1 = "91a5737baed20ee31f3faea0e51f57461f6a689e"
 uuid = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
-version = "2.2.0"
+version = "2.2.1"
 weakdeps = ["ChainRulesCore", "InverseFunctions"]
 
     [deps.StatsFuns.extensions]
@@ -2637,9 +2687,9 @@ version = "0.7.10"
 
 [[deps.StringManipulation]]
 deps = ["PrecompileTools"]
-git-tree-sha1 = "532e983cd333609f95d618c744fc40d01ea6e17a"
+git-tree-sha1 = "773065c6e0e903924a9d838259be74338422aef2"
 uuid = "892a3eda-7b42-436c-8928-eab12a02cf0e"
-version = "0.4.6"
+version = "0.5.0"
 
 [[deps.StringViews]]
 git-tree-sha1 = "f2dcb92855b31ad92fe8f079d4f75ac57c93e4b8"
@@ -2675,9 +2725,9 @@ version = "1.11.0"
 
 [[deps.StructUtils]]
 deps = ["Dates", "UUIDs"]
-git-tree-sha1 = "82bee338d650aa515f31866c460cb7e3bcef90b8"
+git-tree-sha1 = "2d0fc55c61321ba245c47be599570d11bac50303"
 uuid = "ec057cc2-7a8d-4b58-b3b3-92acb9f63b42"
-version = "2.8.2"
+version = "2.8.5"
 
     [deps.StructUtils.extensions]
     StructUtilsMeasurementsExt = ["Measurements"]
@@ -2719,9 +2769,9 @@ version = "1.0.3"
 
 [[deps.TZJData]]
 deps = ["Artifacts"]
-git-tree-sha1 = "72df96b3a595b7aab1e101eb07d2a435963a97e2"
+git-tree-sha1 = "d3b30a9f29a898e21fb4bdf280101b7a12e1f39c"
 uuid = "dc5dba14-91b3-4cab-a142-028a31da12f7"
-version = "1.5.0+2025b"
+version = "1.5.1+2025b"
 
 [[deps.TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
@@ -2731,9 +2781,9 @@ version = "1.0.1"
 
 [[deps.Tables]]
 deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "OrderedCollections", "TableTraits"]
-git-tree-sha1 = "0f38a06c83f0007bbab3cf911262841c9a0f07e0"
+git-tree-sha1 = "a94d9bdda1b7bed0046cea645639ab3f62196fac"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.13.0"
+version = "1.14.0"
 
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
@@ -2791,9 +2841,9 @@ uuid = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
 version = "1.4.6"
 
 [[deps.URIs]]
-git-tree-sha1 = "bef26fb046d031353ef97a82e3fdb6afe7f21b1a"
+git-tree-sha1 = "908fec9df6c5de98548ead82a468c95ccf6cd263"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.6.1"
+version = "1.7.0"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
@@ -2925,9 +2975,9 @@ version = "0.2.3+0"
 
 [[deps.libaom_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "850b06095ee71f0135d644ffd8a52850699581ed"
+git-tree-sha1 = "ef17c47d22224aaecc76e597ab21a072e025cf7b"
 uuid = "a4ae2306-e953-59d6-aa16-d00cac43593b"
-version = "3.13.3+0"
+version = "3.14.1+0"
 
 [[deps.libass_jll]]
 deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "HarfBuzz_jll", "JLLWrappers", "Libdl", "Zlib_jll"]
@@ -3017,7 +3067,7 @@ version = "4.1.0+0"
 # ╟─a2494d57-e9a1-4de4-9a82-24986a314ac4
 # ╟─7ef66eeb-d5b9-4b49-a1b6-bbcfec7d319f
 # ╠═43300a4a-8e83-4a70-a01a-7fcf92af49de
-# ╠═c8d3eca0-9bc4-424d-bfb8-167beef915f3
+# ╟─c8d3eca0-9bc4-424d-bfb8-167beef915f3
 # ╟─20e0ce71-5c19-4271-b6d6-81c21f182eff
 # ╠═47d184c7-a60f-4e4b-86c4-b19aa21bf538
 # ╟─94e772e1-b47f-4d8e-9159-4426adff6b4a
@@ -3077,32 +3127,38 @@ version = "4.1.0+0"
 # ╟─e5a357c8-72a5-415b-b35d-1d8c539ff8c7
 # ╟─f9d661a6-8e77-441d-9769-5af6bd73219e
 # ╠═ac944cf9-39fc-4490-876e-e2c28d981c27
-# ╠═b0e8e407-e311-415e-acbe-d494bff9522b
+# ╟─b0e8e407-e311-415e-acbe-d494bff9522b
 # ╠═77162f08-750f-48b0-a13b-db80f3dd004e
 # ╠═ec8f1d5e-ed36-4a43-add3-85d2b56a8ea5
 # ╟─9446fd59-f0f0-4933-887e-cd36540e5641
+# ╟─6a0e329c-83ae-40dd-8205-69f3d45b2daa
 # ╟─c7e12506-794d-4e7e-9057-d7366d471c56
 # ╟─7aa7a638-13e8-4cbc-b49f-dc5dc81afd21
 # ╠═d685bcf3-ad80-4c8e-94c4-04493e2772e5
 # ╟─59b58890-f272-4c54-a151-3f39bf7e2cae
 # ╟─900fc5da-0296-486a-bfe2-49aa7d6a2ec3
+# ╟─39f17e22-fc79-43ed-b95b-e513f1989a7c
 # ╟─9abe9b07-1108-4429-b23e-4bf3152ae30c
 # ╟─89c88934-8f10-4c46-b2cc-c39c39c8e103
 # ╠═7cb31f1a-fa43-4ef9-96a8-b234a41ac179
 # ╠═c95a87d1-e6be-4c5d-bfdd-1f162cfc2550
 # ╠═414fceee-b97e-4526-b8d9-cf05049e4ebd
-# ╠═07b578ea-0f90-4ace-8cbc-91944f889cda
+# ╠═51ffe48c-915f-4f55-bb08-5cac11fc6da3
+# ╟─07b578ea-0f90-4ace-8cbc-91944f889cda
 # ╟─a0471a1c-6654-4957-a8b2-265001ea540a
 # ╠═d31683ef-e564-4380-917a-e8baad847eb6
+# ╟─60bb2cac-bfdc-480d-a47d-f10dac2f6caa
 # ╟─f4ebf000-3b48-4ac5-b188-fb0fe952e16b
 # ╟─dea1063a-61b3-47c6-912d-94a7894614ec
 # ╠═c9131bc9-34ba-4e93-8399-90a66ae39753
 # ╟─1b8b400b-7b04-43ad-8902-dc3eb6598fc7
 # ╠═b511572c-80fd-46eb-8ad7-39233cb938ef
 # ╟─4dbd3fa4-6918-4729-9c6b-4586bed44da6
+# ╟─4b7e6190-e089-448c-be92-8c9b9ba02539
 # ╠═eceaed34-060f-47b3-8085-c6c09c5d61b6
+# ╠═56ef29b9-6fd4-4e4a-becb-5bd88871fcb9
 # ╟─27d2ad90-ecd8-42e7-b552-85b7653b595c
-# ╟─903ce2d5-4d7d-4fec-9890-790acf9d9e37
+# ╠═903ce2d5-4d7d-4fec-9890-790acf9d9e37
 # ╟─3a7dc1c6-9250-4213-99c0-8ad5b5f7f248
 # ╠═a0a0c2ad-7b00-48a9-a823-2016fd32b4db
 # ╟─26526500-c60c-499d-acc7-18db98460998
@@ -3118,9 +3174,10 @@ version = "4.1.0+0"
 # ╠═9c69199e-5637-4af7-9664-720848078109
 # ╠═6c57e246-bf26-4bd1-a7b0-1ad386a19990
 # ╠═eb8ee8b6-8cb0-4cbb-8132-dd512d7cb661
+# ╠═45dcfe36-ebe0-4773-b4f5-bdda6641dbaa
 # ╠═95dc2cf3-3b07-4438-95a2-8f5f857b3107
-# ╠═912b794a-18f4-4471-91e5-01e8ab412edf
 # ╟─86599e5a-6d28-4ab2-97d3-3751258feccb
+# ╠═738a80f1-7b16-465a-9a2a-d676558a43b8
 # ╟─8e3311d9-c4d9-4ee1-a97a-260d82855ddb
 # ╟─890a3957-80f6-4213-919a-cf3d17f71053
 # ╟─00000000-0000-0000-0000-000000000001
