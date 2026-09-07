@@ -2,4 +2,27 @@
 title: "Material"
 ---
 
-t.b.a.
+
+## Slides
+::: {.callout-caution}
+## Danger!
+Not yet clear to me how to easiest share the slides. Probably will embedd them here somehow
+:::
+
+
+[Linear Regression]()
+
+[Linear Mixed Models]()
+
+## Exercises
+
+::: {.callout-caution}
+## Danger!
+The exercises are not yet ready, please move along, nothing to see here :)
+:::
+
+The exercises can be found here:
+
+```{.default .code-overflow-wrap}
+https://github.com/s-ccs/workshop_lmm_2026/blob/main/01_exercises.jl
+```

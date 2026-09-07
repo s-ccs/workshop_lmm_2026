@@ -1,7 +1,7 @@
 ---
 title: "Mixed Models / Hierarchical Models"
 author: "Benedikt Ehinger"
-date: "March 22nd, 2018"
+date: last-modified
 format:
   revealjs:
     incremental: false
@@ -27,10 +27,11 @@ using LinearAlgebra, StatsBase, GLM
 
 # Global theme settings
 set_theme!(Theme(
-    fontsize = 18,
+    fontsize = 20,
     font = "Helvetica",
 ))
 
+CairoMakie.activate!(type = "svg")
 nboot = 200;
 ```
 
@@ -92,7 +93,6 @@ But what if we have data from within the same subjects?
 ```{julia}
 #| echo: false
 #| fig-width: 8
-
 Random.seed!(1)
 conn = DataFrame(subject=string.(dat.subject), group=dat.group, response=dat.response)
 
@@ -102,20 +102,25 @@ data(dat) * mapping(:group, :response) * visual(Scatter; markersize=4) |> draw
 data(conn) * mapping(:group, :response, color=:subject) * visual(Lines) |> x->draw!(current_axis(), x)
 current_figure()
 
+
 ```
+
+
 <aside  class="notes">
 Each subject is measured in multiple conditions. This allows us to remove individual offsets. Think of an extreme example. One subject has a score in one condition of 1000 and the other condition of 1001. A second subject a score of 10 and 11. The difference between conditions is 1 for both subjects. But if we would assume the data came from four separate subjects, we have to calculate the variance over [10 1000] and [1001 11]. Taking into account repeated measures can remove a lot of distracting effects/variances.
 </aside >
 
-## Individual differences
 
+## Removing individual differences
 ```{julia}
 #| echo: false
-#| fig-width: 8
-
-data(datDiff) * mapping(:difference) * histogram(bins=20) |> draw
+#| fig-width: 12
+data(datDiff) * mapping(:difference) * histogram(bins=20) |> x->draw!(Axis(current_figure()[1,2]),x)
+current_figure()
 ```
+
 Between-Subject variability can be removed by repeated measures. This can result in higher power!
+
 
 
 <aside  class="notes">
@@ -181,7 +186,7 @@ $n_S=5$ subjects
 #| fig-width: 8
 
 _df =  df[df.type .=="Samplingdistribution of subject-means",:]
-_df.y = _df.y ./ max(_df.y)
+_df.y = _df.y ./ maximum(_df.y)  ./ 5
 lines!(_df.x,_df.y,color=:purple)
 
 current_figure()
@@ -221,8 +226,8 @@ But what if I tell you that we actually have multiple trials per this black data
 #| echo: false
 #| fig-width: 8
 _df =  df[df.type .=="Samplingdistribution of data-points",:]
-_df.y = _df.y ./ max(_df.y)
-lines!(_df.x,_df.y./5)
+_df.y = _df.y ./ maximum(_df.y) ./ 5
+lines!(_df.x,_df.y)
 
 
 f
@@ -241,7 +246,7 @@ The sampling distribution is much smaller now, assumed we forgot that the data a
 #| fig-width: 8
 
 _df =  df[df.type .=="Samplingdistribution of subject-means",:]
-_df.y = _df.y ./ max(_df.y)
+_df.y = _df.y ./ maximum(_df.y) ./ 5
 lines!(_df.x,_df.y,color=:purple)
 
 f
@@ -284,7 +289,7 @@ function genDat(sd1, sd2; plotDist=false)
     fig = Figure(size=(500, 300))
     ax = Axis(fig[1,1], yticks=[], xlabel="")
 
-    data(level1) * mapping(:response, color=:subject) * visual(Scatter) |> draw
+    data(level1) * mapping(:response, color=:subject=>nonnumeric) * visual(Scatter) |> draw
     #data(meanDat) * mapping(:m) * visual(Scatter) |> x->draw!(current_axis(), x)
     
     if plotDist
@@ -351,9 +356,11 @@ for k in 1:15
     global level1 = vcat(level1, tmp)
 end
 
-data(level1) * mapping(:subject, :response, color=:subject) * visual(Beeswarm; algorithm=:pseudorandom) |> draw
+
+ax = Axis(Figure()[1,1])
+data(level1) * mapping(:subject, :response, color=:subject) * visual(Beeswarm; algorithm=:pseudorandom) |> x->draw!(ax,x)
 subj_means = combine(groupby(level1, :subject), :response => mean => :m)
-data(subj_means) * mapping(:subject, :m) * visual(Scatter; markersize=6, color=:black) |> x->draw!(current_axis(), x)
+data(subj_means) * mapping(:subject, :m) * visual(Scatter; markersize=6, color=:black) |> x->draw!(ax, x)
 current_figure()
 ```
 
@@ -390,7 +397,7 @@ We should trust those subjects more, where we most sure about their central tend
 
 A second point is, repeated measures allow us to remove variance which is great! But standard approaches do not work anymore and might make us TOO confident. Nevertheless if the experimental design allows it, always try to do repeated measures.</aside >
 
-# New section
+# An example to guide you through the steps
 
 ## The example
 
@@ -398,7 +405,7 @@ A second point is, repeated measures allow us to remove variance which is great!
 ```{julia}
 #| echo: false
 
-# --- Simulate EEG data using MixedModelsSim.jl ---
+# --- using MixedModelsSim.jl ---
 # Based on https://github.com/mbjoseph/hierarchical_models
 rng = MersenneTwister(2)
 J = 20  # number of subjects
@@ -425,8 +432,8 @@ sigma_slope = 0.1
 sigma_y = 7.0
 
 # Fit a null model to set up the structure
-d.p100 = randn(nrow(d))  # placeholder
-mnull = lmm(@formula(p100 ~ 1 + contrast + (1 + contrast | subject)), d)
+d.estim_error = randn(rng2,nrow(d))  # placeholder
+mnull = lmm(@formula(estim_error ~ 1 + contrast + (1 + contrast | subject)), d)
 
 # Build random-effects Cholesky factor (relative to residual σ)
 # Intercept σ = 3/7, Slope σ = 0.1/7 (relative to σ=7)
@@ -439,33 +446,31 @@ re_subj = create_re(sigma_intercept/sigma_y , sigma_slope/sigma_y)
 # Simulate response using parametric bootstrap (1 replication gives us 1 dataset)
 #sim_eeg = parametricbootstrap(MersenneTwister(42), 1, mnull;
 #                              β=β_eeg, σ=sigma_y, θ=θ_eeg)
-simulate!(mnull;β=β_eeg, σ=sigma_y, θ=θ_eeg)
+simulate!(rng2,mnull;β=β_eeg, σ=sigma_y, θ=θ_eeg)
 # Extract simulated response from the bootstrap
-d.p100 = mnull.y#sim_eeg[1].y
+d.estim_error = mnull.y#sim_eeg[1].y
 
 # Fit the final mixed model
-mres = lmm(@formula(p100 ~ 1 + contrast + (1 + contrast | subject)), d)
+mres = lmm(@formula(estim_error ~ 1 + contrast + (1 + contrast | subject)), d)
 ```
 
-<img src="images/erp_graph2.png" width="60%">
 
-EEG-Experiment: Contrast vs. P100 size
+Experiment: Contrast vs. Density Estimation
+![density_plot.png](images/density_plot.png)
 
-=> Very noisy subjects (babies?), between $(minimum(n_j))$ and $(maximum(n_j))$ trials
-<aside  class="notes"> We will use an somewhat realistic example based on EEG data. Imagine you want to perform a psycho-physical experiment elucidating on the relation between brain response (the P100 ERP/EEG response) and the contrast of your favorite stimulus. In the experiment you show the stimulus with a given contrast (randomly chosen*) and record the response (P100 amplitude). Because your subjects are babies, they will quit the experiment at various points in time. Also their data will be quite noisy due to movement and other inattention effects.
-
-* of course randomly choosing the contrast is quite sub-optimal, but for the sake of the explanation...)
-</aside >
+=> Online experiments with dropout: between`julia (minimum(n_j))` and `julia (maximum(n_j))` trials
 
 ## The data
 
 
 ```{julia}
 #| echo: false
-#| fig-width: 8
-#| fig-height: 4
+#| fig-width: 12
+#| fig-height: 8
+g = data(d) * mapping(:contrast, :estim_error, layout=:subject) * visual(Scatter) |> x->draw(x, scales(Layout=(;categories= c-> c.=>"")), legend=(;show=false))
+[hidespines!(ax.axis) for ax in g.grid]
 
-data(d) * mapping(:contrast, :p100, color=:subject,layout=:subject) * visual(Scatter) |> draw
+g
 
 ```
 
@@ -480,12 +485,14 @@ data(d) * mapping(:contrast, :p100, color=:subject,layout=:subject) * visual(Sca
 #| fig-width: 8
 #| fig-height: 4
 
-co = coef(lm(@formula(p100 ~ 1 + contrast), d))
-df_fit = DataFrame(contrast=1:100, p100=co[1] .+ co[2] .* (1:100))
+co = coef(lm(@formula(estim_error ~ 1 + contrast), d))
+df_fit = DataFrame(contrast=1:100, estim_error=co[1] .+ co[2] .* (1:100))
 
-data(d) * mapping(:contrast, :p100, color=:subject) * visual(Scatter) |> draw
-data(df_fit) * mapping(:contrast, :p100) * visual(Lines; color=:gray) |> x->draw!(current_axis(), x)
-current_figure()
+g = data(d) * (
+    mapping(:contrast, :estim_error, color=:subject,layout=:subject) * visual(Scatter)+
+    mapping(:contrast, :estim_error) *linear(;interval=nothing)) |>x->draw(x, scales(Layout=(;categories= c-> c.=>"")), legend=(;show=false))
+[hidespines!(ax.axis) for ax in g.grid]
+g
 ```
 $$\hat{y} = \beta_0 + \beta_1 * contrast $$
 <aside  class="notes">If we would fit only a single model to all data points (disregarding subject-dependencies), it would look like this. This would need the assumption, that all data is actually coming from the same process. In other words: there is no difference between babies.</aside >
@@ -501,7 +508,7 @@ $$\hat{y} = \beta_0 + \beta_1 * contrast $$
 coefs = DataFrame()
 for s in levels(d.subject)
     sd = d[d.subject .== s, :]
-    m = lm(@formula(p100 ~ 1 + contrast), sd)
+    m = lm(@formula(estim_error ~ 1 + contrast), sd)
     c = coef(m)
     coefs = vcat(coefs, DataFrame(subject=s, term=["(Intercept)","contrast"], estimate=[c[1], c[2]]))
 end
@@ -512,7 +519,7 @@ for s in levels(d.subject)
     sc = coefs[coefs.subject .== s, :]
     intercept_s = sc.estimate[sc.term .== "(Intercept)"][1]
     slope_s = sc.estimate[sc.term .== "contrast"][1]
-    cf = DataFrame(subject=s, contrast=1:100, p100=intercept_s .+ slope_s .* (1:100))
+    cf = DataFrame(subject=s, contrast=1:100, estim_error=intercept_s .+ slope_s .* (1:100))
     fitIndi = vcat(fitIndi, cf)
 end
 
@@ -524,17 +531,18 @@ for (idx, s) in enumerate(levels(d.subject))
     u0 = re[1][1,idx]
     u1 = re[1][2,idx]
     cf = DataFrame(subject=s, contrast=1:100,
-                   p100=(fe[1] .+ u0) .+ (fe[2] .+ u1) .* (1:100))
+                   estim_error=(fe[1] .+ u0) .+ (fe[2] .+ u1) .* (1:100))
     fitRan = vcat(fitRan, cf)
 end
 
-co = coef(lm(@formula(p100 ~ 1 + contrast), d))
-df_fit = DataFrame(contrast=1:100, p100=co[1] .+ co[2] .* (1:100))
+co = coef(lm(@formula(estim_error ~ 1 + contrast), d))
+df_fit = DataFrame(contrast=1:100, estim_error=co[1] .+ co[2] .* (1:100))
 
-data(d) * mapping(:contrast, :p100) * visual(Scatter) |> draw
-data(df_fit) * mapping(:contrast, :p100) * visual(Lines; color=:gray) |> x->draw!(current_axis(), x)
-data(fitIndi) * mapping(:contrast, :p100, color=:subject) * visual(Lines) |> x->draw!(current_axis(), x)
-current_figure()
+g = data(d) * (
+    mapping(:contrast, :estim_error, color=:subject,layout=:subject) * (linear(;interval=nothing)+visual(Scatter))+
+    mapping(:contrast, :estim_error) *(linear()*subvisual(:prediction, color = :gray)) ) |> x->draw(x, scales(Layout=(;categories= c-> c.=>"")), legend=(;show=false))
+[hidespines!(ax.axis) for ax in g.grid]
+g
 ```
 $$\hat{y_j} = \beta_{0,j} + \beta_{1,j} * contrast $$
 <aside class="notes"> The alternative extreme is to fit one model for each subject. An individual fit (each colored line). You can clearly see that subjects' individual fits are very different from each other and can be very different from the average model fit (gray). Let's look at the result of the subject in the lower right corner. It looks like that many different lines with many different slopes would fit the data equally well (or quite close). That is, there is a high uncertainty on the slope parameter. As discussed earlier, we should deemphasize this subject, that is, take into account our uncertainty. We will soon find a compromise between the two extremes, individual fits vs. complete pooled fit.
@@ -547,8 +555,7 @@ $$\hat{y_j} = \beta_{0,j} + \beta_{1,j} * contrast $$
 #| echo: false
 
 # Left plot: all individual fits
-plt1 = data(fitIndi) * mapping(:contrast, :p100, color=:subject) * visual(Lines) |> draw
-current_figure()
+plt1 = data(fitIndi) * mapping(:contrast, :estim_error, color=:subject) * visual(Lines) |> draw
 
 # Right plot: histogram of slope estimates + normal overlay
 meanList = combine(groupby(coefs, :term), :estimate => mean => :m)
@@ -559,18 +566,19 @@ slope_mean = meanList.m[meanList.term .== "contrast"][1]
 slope_sd = sdList.sd[sdList.term .=="contrast"][1]
 
 xseq = range(-0.5, 0.5, length=100)
-norm_df = DataFrame(x=collect(xseq), y=pdf.(Normal(slope_mean, slope_sd), xseq))
+norm_df = DataFrame(x=collect(xseq), y=pdf.(Normal(slope_mean, slope_sd), xseq) .* 30)
 
-fig = Figure(size=(500, 400))
-ax = Axis(fig[1,1])
 
 plt2 = data(DataFrame(estimate=slope_estimates)) * mapping(:estimate) * histogram(normalization=:density) |> draw
-data(norm_df) * mapping(:x, :y) * visual(Lines; color=:blue, linewidth=2) |> x->draw!(current_axis(), x)
+ax = current_axis()
+data(norm_df) * mapping(:x, :y) * visual(Lines; color=:blue, linewidth=2) |> x->draw!(ax, x)
 vlines!(ax, [slope_mean], color=:blue, linewidth=2, linestyle=:dash)
 vlines!(ax, [0.0], color=:black, linewidth=2)
 
 nothing;
 ```
+
+
 
 :::: {layout-ncol=2}
 ::: {column}
@@ -605,7 +613,7 @@ It is statistically possible and accurate (but not as powerful as mixed models),
 <img src="images/mm_figures-01.svg" width='100%'>
 **Linear Mixed Model** aka **Hierarchical Model** aka **Multilevel Model**
 
-We estimate the population distribution directly. Subject-means with high uncertainty are less influential for the model fit
+We estimate the population distribution directly. Subject-means with high uncertainty due to different trial numbers are less influential for the model fit
 <aside  class="notes">
 The top distribution represents the (non-measurable) population. One can imagine, that each sampled subject represents one instance (random sample) of the population. If we have multiple trials per subject, than the game is repeated, each trial is one random sample of the subject distribution. We want to go in reverse direction, i.e. estimate from trial-wise measured data the subject means + variances and the population mean +variance
 </aside>
@@ -694,11 +702,11 @@ $\hat{y}_j = \beta X_j + b_jZ$
 
 Fitting this in Julia using the package **MixedModels.jl**
 
-`@formula(p100 ~ 1 + contrast + (1 + contrast | subject))`
+`@formula(estim_error ~ 1 + contrast + (1 + contrast | subject))`
 
 
 Note: In R::LME4 use `||` for uncorrelated random effects:
-`p100 ~ 1 + contrast + (1 + contrast || subject))`
+`estim_error ~ 1 + contrast + (1 + contrast || subject))`
 
 
 <aside class="notes">
@@ -711,8 +719,9 @@ Everything in brackets defines that it is nested in the grouping variable. For e
 ```{julia}
 #| results: 'markup'
 
-mres = lmm(@formula(p100 ~ 1 + contrast + (1+contrast | subject)), d)
-print(summary(mres))
+mres = lmm(@formula(estim_error ~ 1 + contrast + (1+contrast | subject)), d)
+using DisplayAs
+mres |> DisplayAs.Text
 ```
 <aside class="notes">
 This is the model summary output. The important bits are under "Random effects" and "Fixed effects". Random effects describes the variance component, fixed effects the mean components. We are usually interested in the "fixed effect" estimates (more to the names later). I.e. it is not so interesting how much subjects vary in their mean-effects, but on how large the effect is on average
@@ -720,18 +729,30 @@ This is the model summary output. The important bits are under "Random effects" 
 (1 + contrast||subject) is equal to (1|subject) + (0+contrast|subject)
 </aside>
 
-
+## 
 
 ```{julia}
 #| echo: false
-#| fig-width: 8
-#| fig-height: 4
+#| fig-width: 12
+#| fig-height: 8
 
-data(d) * mapping(:contrast, :p100) * visual(Scatter) |> draw
-data(df_fit) * mapping(:contrast, :p100) * visual(Lines; color=:gray) |> x->draw!(current_axis(), x)
-data(fitIndi) * mapping(:contrast, :p100, color=:subject) * visual(Lines) |> x->draw!(current_axis(), x)
-data(fitRan) * mapping(:contrast, :p100) * visual(Lines; color=:black) |> x->draw!(current_axis(), x)
-current_figure()
+
+
+
+
+data(d) * mapping(:contrast, :estim_error) * visual(Scatter) |> draw
+data(fitIndi) * mapping(:contrast, :estim_error, color=:subject) * visual(Lines) |> x->draw!(current_axis(), x)
+
+
+g = data(d) * (
+    mapping(:contrast, :estim_error, color=:subject,layout=:subject) * (linear(;interval=nothing)+visual(Scatter))+
+    mapping(:contrast, :estim_error) *(linear()*subvisual(:prediction, color = :gray)) ) +
+    
+(data(fitRan) * mapping(:contrast,:estim_error,layout=:subject)*visual(Lines)) |>x->draw(x, scales(Layout=(;categories= c-> c.=>"")), legend=(;show=false))
+[hidespines!(ax.axis) for ax in g.grid]
+
+
+g
 ```
 
 gray: one model, color: individual model, black: mixed model
@@ -853,8 +874,8 @@ One way (good and common, but not the best*): Model comparison for fixed effects
 
 ```{julia}
 #| echo: true
-mres0 = lmm(@formula(p100 ~ 1 + (1+contrast | subject)), d)
-mres1 = lmm(@formula(p100 ~ 1 + contrast + (1+contrast | subject)), d)
+mres0 = lmm(@formula(estim_error ~ 1 + (1+contrast | subject)), d)
+mres1 = lmm(@formula(estim_error ~ 1 + contrast + (1+contrast | subject)), d)
 lrtest(mres0,mres1)
 ```
 ```{julia}
@@ -877,7 +898,7 @@ Simpler approach: Wald-based confidence intervals
 
 ```{julia}
 #| echo: true
-summary(mres1)
+mres1 |> DisplayAs.Text
 ```
 
 ```{julia}
@@ -906,7 +927,7 @@ Each method to make a decision (e.g. Wald's, Bootstrap, MCMC, Profiling, Permuta
 ```{julia}
 #| echo: true
 using MixedModelsSmallSample
-mres1_reml = lmm(@formula(p100 ~ 1 + contrast + (1+contrast | subject)), d;REML=true)
+mres1_reml = lmm(@formula(estim_error ~ 1 + contrast + (1+contrast | subject)), d;REML=true)
 kr = small_sample_adjust(mres1_reml,KenwardRoger())
 sw = small_sample_adjust(mres1_reml,Satterthwaite())
 
@@ -927,7 +948,7 @@ coeftable(sw)
 ```{julia}
 #| echo: false
 
-mres = fit(MixedModel,@formula(p100 ~ 1 + contrast + (1 + contrast | subject)), d)
+mres = fit(MixedModel,@formula(estim_error ~ 1 + contrast + (1 + contrast | subject)), d)
 ```
 :::: {layout-ncol=2}
 ::: {column}
@@ -1068,10 +1089,10 @@ Each dot is an estimate of a single subject. The blue dots are after using the m
 #| fig-width: 8
 #| fig-height: 4
 
-data(d) * mapping(:contrast, :p100) * visual(Scatter) |> draw
-data(df_fit) * mapping(:contrast, :p100) * visual(Lines; color=:gray) |> x->draw!(current_axis(), x)
-data(fitIndi) * mapping(:contrast, :p100, color=:subject) * visual(Lines) |> x->draw!(current_axis(), x)
-data(fitRan) * mapping(:contrast, :p100) * visual(Lines; color=:black) |> x->draw!(current_axis(), x)
+data(d) * mapping(:contrast, :estim_error) * visual(Scatter) |> draw
+data(df_fit) * mapping(:contrast, :estim_error) * visual(Lines; color=:gray) |> x->draw!(current_axis(), x)
+data(fitIndi) * mapping(:contrast, :estim_error, color=:subject) * visual(Lines) |> x->draw!(current_axis(), x)
+data(fitRan) * mapping(:contrast, :estim_error) * visual(Lines; color=:black) |> x->draw!(current_axis(), x)
 current_figure()
 ```
 
@@ -1233,25 +1254,25 @@ In the mixed model context we can add this correlation value, i.e. we try to est
 
 ::: {column}
 
-**Random/Fixed Coefficients**
-  - **Random intercept**
-     - `(1 | subject)`: Different offset for each subject
-  - **Random slope**
-     - `(predictor | subject)`: Different predictor-slope for each subject
-  - **Random correlation**
-     - `(1 + predictor | subject)` or `(X + Y | subject)`: Knowing about X tells you something about Y
-  - **Fixed coefficient**
-     - exactly the same for all subjects
+#### Random/Fixed Coefficients
+- **Random intercept**
+    `(1 | subject)`: Different offset for each subject
+- **Random slope**
+    `(predictor | subject)`: Different predictor-slope for each subject
+- **Random correlation**
+    `(1 + predictor | subject)` or `(X + Y | subject)`: Knowing about X tells you something about Y
+- **Fixed coefficient**
+    exactly the same for all subjects
 
 :::
 
 ::: {column}
 
-**Random/Fixed Variables**s
-  - **Random variable**
-     - Instance $\in$ population, e.g. subjects, images, words
-  - **Fixed variable**
-     - limited number of possible values or no generalization to population needed, e.g. 3 different experimental conditions
+#### Random/Fixed Variables
+- **Random variable**
+    Instance $\in$ population, e.g. subjects, images, words
+- **Fixed variable**
+    limited number of possible values or no generalization to population needed, e.g. 3 different experimental conditions
 
 
 *Random effect* also used for either *random coefficient* or *random variable*
@@ -1276,17 +1297,16 @@ This mix of terminology is unfortunate. The first divide is between coefficients
 
 d.contrastSquare = d.contrast .^ 2
 
-try
-    m_complex = lmm(@formula(p100 ~ 1 + contrast + contrastSquare + (1 + contrast + contrastSquare | subject)), d)
-    print(summary(m_complex))
-catch e
-    println("Convergence warning: ", e)
-end
+
+m_complex = lmm(@formula(estim_error ~ 1 + contrast + contrastSquare + (1 + contrast + contrastSquare | subject)), d)
+m_complex |> DisplayAs.Text
+
 ```
 
 **Common warnings:**
 - Predictor variables on very different scales: consider rescaling
 - Model failed to converge: degenerate Hessian with negative eigenvalues
+- Optimizers needs maaaany iterations
 
 <aside class="notes">
 Often, when using a more complex model, the model fit does not converge. We will have a look next on what to do then.
@@ -1393,19 +1413,27 @@ Remember the problems of step-wise procedures. There is currently a long debate 
 ## A clarification to simplification
 
 Often people simplify like this:
-`y ~ 1 + X * Y + (1 + X * Y | group)`
-`y ~ 1 + X * Y + zerocorr(1 + X * Y | group)`
-`y ~ 1 + X * Y + zerocorr(1 + X + Y | group)`
-`y ~ 1 + X * Y + zerocorr(1 + X | group)`
-`y ~ 1 + X * Y + (1 | group)`
+```{}
+y ~ 1 + X * Y + (1 + X * Y | group)
+
+y ~ 1 + X * Y + zerocorr(1 + X * Y | group)
+
+y ~ 1 + X * Y + zerocorr(1 + X + Y | group)
+
+y ~ 1 + X * Y + zerocorr(1 + X | group)
+
+y ~ 1 + X * Y + (1 | group)
+```
 
 But if your hypothesis is on the interaction of `X&Y`, (following Matuschek) you should rather
 
-`y ~ 1 + X * Y + (1 + X * Y | group)`
-`y ~ 1 + X * Y + zerocorr(1 + X * Y | group)`
-`y ~ 1 + X * Y + zerocorr(1 + X + X&Y | group)`
-`y ~ 1 + X * Y + zerocorr(1 + X&Y| group)`
-`y ~ 1 + X * Y + (0 + X&Y | group)`
+```{}
+y ~ 1 + X * Y + (1 + X * Y | group)
+y ~ 1 + X * Y + zerocorr(1 + X * Y | group)
+y ~ 1 + X * Y + zerocorr(1 + X + X&Y | group)
+y ~ 1 + X * Y + zerocorr(1 + X&Y| group)
+y ~ 1 + X * Y + (0 + X&Y | group)
+```
 
 i.e. keep the random slopes for the effect you are most interested in the longest.
 
@@ -1482,7 +1510,7 @@ current_figure()
 
 # Model summary
 mm = lmm(@formula(y ~ condition + (1 + condition | subject)), dat2)
-println(summary(mm))
+mm|> DisplayAs.Text
 ```
 
 What a nice effect! Write paper and end of story?
@@ -1506,7 +1534,7 @@ current_figure()
 #| fig-width: 8
 #| fig-height: 4
 
-data(dat2) * mapping(:stimulus, :y, color=:condition) * visual(Scatter; alpha=0.3) |> draw
+data(dat2) * mapping(:stimulus, :y, color=:condition=>nonnumeric) * visual(Scatter; alpha=0.3) |> draw
 current_figure()
 ```
 
@@ -1529,7 +1557,7 @@ current_figure()
 
 # Model with stimulus random effect
 mm2 = lmm(@formula(y ~ condition + (1 + condition | subject) + (1 | stimulus)), dat2)
-println(summary(mm2))
+mm2 |> DisplayAs.Text
 ```
 
 Often it is necessary to add multiple random effects! Examples are: subjects, stimuli (images, words, etc)

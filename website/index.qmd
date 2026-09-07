@@ -4,13 +4,18 @@ title: "LMM Workshop 2026"
 
 We will discuss Linear Mixed Models in the context of (visualization) user studies and beyond.
 
+Julia is the language of choice, with the excellent MixedModels.jl package.
+
 ## Dates
 
-10 & 11 September 2026
+10. & 11. September 2026
 
-## Program
 
-See the program on this website
+::: {.callout-important}
+## Read this
+1. Please follow the [installation instructions](installation.html) to install Julia + required packages **pre-workshop**
+2. Optional: Bring your own dataset with a short description of the data variables (what ought to be modelled, by what predictors, how many levels, within / between subjects?). We are planning individual time towards the end of the workshop.
+:::
 
 ## Organizers
 
@@ -30,7 +35,7 @@ See the program on this website
       Benedikt Ehinger
     </td>
     <td style="width: 50%;">
-      <img src="assets/Sita_Friend_placeholder.svg" alt="Sita Friend" class="round-image"><br>
+      <img src="assets/Sita.jpg" alt="Sita Vriend" class="round-image"><br>
       Sita Friend
     </td>
   </tr>
