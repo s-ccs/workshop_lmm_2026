@@ -1685,7 +1685,82 @@ We want to generalize over items!
 If we leave one of these two, we will ($\approx$) make statistical inferences on the sample at hand, without much generalization.
 
 
+# Within-Between Model
 
+## Simpsons Paradox?
+```{julia}
+#| echo: false
+
+function generate(rng::AbstractRNG = MersenneTwister(6))
+    group_list = ["one", "two", "three", "four", "five"]
+    trials_per_group = 200
+    n = length(group_list)
+
+    group_intercepts = sort(rand(rng, n)).+1
+    group_slopes     = fill(1.5, n)
+    group_mx         = group_intercepts * 5
+
+    group     = repeat(group_list,     inner = trials_per_group)
+    subject   = repeat(1:n,            inner = trials_per_group)
+    intercept = repeat(group_intercepts, inner = trials_per_group)
+    slope     = repeat(group_slopes,   inner = trials_per_group)
+    mx        = repeat(group_mx,       inner = trials_per_group)
+
+    x = mx .+ randn(rng, length(mx))
+    y = intercept .+ (x .- 2*mx) .* slope .+ randn(rng, length(intercept))
+
+    data = DataFrame(subject = group, subject_idx = subject, x = x, y = y)
+    rename!(data,:x=>:dwell_time)
+    rename!(data,:y=>:comprehension_score)
+    data.comprehension_score .+=20
+    return data, group_list
+end
+
+d, group_list = generate()
+f = data(d)*mapping(:dwell_time,:comprehension_score,color=:subject)*visual(Scatter)|>draw
+
+f
+```
+
+## Simpson's Paradox!
+```{julia}
+
+f = data(d)*(
+    mapping(:dwell_time,:comprehension_score,color=:subject)*(visual(Scatter)+linear())+
+    mapping(:dwell_time,:comprehension_score)*linear())|>draw
+
+```
+## Some models
+
+:::{.column}
+```{julia}
+d_avg = combine(groupby(d,:subject),:dwell_time=> mean => :dwell_time_mean, :comprehension_score=> mean => :comprehension_score_mean)
+
+lm(@formula(comprehension_score_mean ~ 1 + dwell_time_mean),d_avg)
+
+```
+:::
+:::{.column}
+```{julia}
+lmm(@formula(comprehension_score~1+dwell_time+(1+dwell_time|subject)),d)
+```
+:::
+
+## The within-between model
+We can model this with LMMs, by disentangling the effect of `x` on the `average` with `x` on the `individual`.
+
+```{julia}
+for g in groupby(d,[:subject])
+     g.dt_avg .= mean(g.dwell_time)
+     g.dt_dev .= g.dwell_time .- mean(g.dwell_time)
+end
+
+lmm(@formula(comprehension_score~1+dt_avg + dt_dev + (1+dt_dev|subject)),d)
+```
+
+tldr;: Centering is not as straight forward as in `LinearModels`!
+
+[For detailed info on centering, have a read here (based on schools/students)](https://uoepsy.github.io/lmm/10_centering.html?panelset_001=within-between-model&panelset_002=mundlak-model)
 # Simulating data with MixedModelsSim.jl
 
 `MixedModelsSim.jl` provides tools for simulating data from mixed models - much easier than manual simulation!
