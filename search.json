@@ -4,7 +4,21 @@
     "href": "material.html",
     "title": "Material",
     "section": "",
-    "text": "t.b.a."
+    "text": "CautionDanger!\n\n\n\nNot yet clear to me how to easiest share the slides. Probably will embedd them here somehow\n\n\nLinear Regression\nLinear Mixed Models"
+  },
+  {
+    "objectID": "material.html#slides",
+    "href": "material.html#slides",
+    "title": "Material",
+    "section": "",
+    "text": "CautionDanger!\n\n\n\nNot yet clear to me how to easiest share the slides. Probably will embedd them here somehow\n\n\nLinear Regression\nLinear Mixed Models"
+  },
+  {
+    "objectID": "material.html#exercises",
+    "href": "material.html#exercises",
+    "title": "Material",
+    "section": "Exercises",
+    "text": "Exercises\n\n\n\n\n\n\nCautionDanger!\n\n\n\nThe exercises are not yet ready, please move along, nothing to see here :)\n\n\nThe exercises can be found here:\nhttps://github.com/s-ccs/workshop_lmm_2026/blob/main/01_exercises.jl"
   },
   {
     "objectID": "program.html",
@@ -18,21 +32,14 @@
     "href": "index.html",
     "title": "LMM Workshop 2026",
     "section": "",
-    "text": "We will discuss Linear Mixed Models in the context of (visualization) user studies and beyond."
+    "text": "We will discuss Linear Mixed Models in the context of (visualization) user studies and beyond.\nJulia is the language of choice, with the excellent MixedModels.jl package."
   },
   {
     "objectID": "index.html#dates",
     "href": "index.html#dates",
     "title": "LMM Workshop 2026",
     "section": "Dates",
-    "text": "Dates\n10 & 11 September 2026"
-  },
-  {
-    "objectID": "index.html#program",
-    "href": "index.html#program",
-    "title": "LMM Workshop 2026",
-    "section": "Program",
-    "text": "Program\nSee the program on this website"
+    "text": "Dates\n\n& 11. September 2026\n\n\n\n\n\n\n\nImportantRead this\n\n\n\n\nPlease follow the installation instructions to install Julia + required packages pre-workshop\nOptional: Bring your own dataset with a short description of the data variables (what ought to be modelled, by what predictors, how many levels, within / between subjects?). We are planning individual time towards the end of the workshop."
   },
   {
     "objectID": "index.html#organizers",
