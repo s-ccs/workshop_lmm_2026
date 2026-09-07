@@ -15,6 +15,8 @@ format:
 execute:
   cache: true
 engine: julia
+filters: 
+    - quizdown
 ---
 
 ```{julia}
@@ -943,7 +945,7 @@ coeftable(sw)
 ```
 
 # Assumption checking
-## Checking Assumptions Level I
+## Checking assumptions level I
 
 ```{julia}
 #| echo: false
@@ -1007,7 +1009,7 @@ QQ plot indicates normality of residuals
 :::
 ::::
 
-## Checking assumptions Level II
+## Checking assumptions level II
 
 In addition: test whether normality for random-variable is true:
 ```{julia}
@@ -1172,7 +1174,7 @@ Here, multiple parameters (two parameters) refer to having an intercept and a sl
 
 ## The multivariate normal I
 
-<iframe scrolling="no" class="stretch" width="1900px" height="1900px" src="https://www.geogebra.org/material/iframe/id/pO4JcWPz/width/1600/height/969/border/888888/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/false/rc/false/ld/false/sdz/false/ctl/false" style="border:0px;"> </iframe>
+<iframe scrolling="yes" class="stretch" width="1900px" height="1900px" src="https://rsmits66.github.io/interactive_tools/probability-and-statistics/probability-basics/multivariate-normal.html#sec-biv" style="border:0px;"> </iframe>
 
 <aside class="notes">
 We move around the multivariate normal distribution to get an intuition what the different parameters do
@@ -1241,6 +1243,8 @@ current_figure()
 :::
 ::::
 
+Similar to `degree of freedom`, if we have a true underlying correlation between random slopes, we ought to model it - as the datapoints are not as independent as we are hoping for (correlation = 0 assumes independence).
+
 <aside class="notes">
 The left plot again shows the multivariate normal of the parameters (e.g. intercept vs slope). The right plot the actual data. I hope the relation between the two plots became clear. Please note, that the two images do not fit to each other. The sketch on the left should have a tilde downward (a negative correlation!)
 
@@ -1250,9 +1254,9 @@ In the mixed model context we can add this correlation value, i.e. we try to est
 
 ## Naming is a bit messy
 
-:::: {layout-ncol=2}
+:::: {.columns}
 
-::: {column}
+::: {.column}
 
 #### Random/Fixed Coefficients
 - **Random intercept**
@@ -1266,7 +1270,7 @@ In the mixed model context we can add this correlation value, i.e. we try to est
 
 :::
 
-::: {column}
+::: {.column}
 
 #### Random/Fixed Variables
 - **Random variable**
@@ -1288,28 +1292,107 @@ In the mixed model context we can add this correlation value, i.e. we try to est
 This mix of terminology is unfortunate. The first divide is between coefficients and variables, they describe very different things. Then the difference between fixed/random coefficients is less clear. Most often the question "should I model this as a random effect" relates to Random Variable vs. "Fixed Variable".
 </aside>
 
+## When to include what
+
+### Some guidance:
+
+- Predictor is a subset of a population?
+
+    => random/grouping variable e.g. subjects, images, words
+
+- Predictor is within subject/grouping? 
+
+    => random coefficients
+
+- Predictor is between subject/grouping or aggregated? 
+
+    => only fixed coefficient
+
+<aside class="notes">
+Sometimes its clear, e.g. you record 40 images of faces and the faces are a random example from all face stimuli.
+sometimes its difficult, e.g. you measure 5 subjects, are these enough to estimate the random variance parameter?
+
+[see discussion here](https://stats.stackexchange.com/questions/37647/minimum-number-of-levels-for-a-random-effects-factor)
+
+</aside>
+
+
+
+## A quiz on when something is what
+
+
+very often you will need to decide whether something belongs to the fixed effects, to the random effects, or both.
+```quizdown
+---
+shuffleQuestions: false
+shuffleAnswers: false
+---
+# `Subject`
+- [ ] Fixed Effect
+- [ ] Random Slope
+- [x] Random Grouping Variable
+
+# `reaction time`
+as a predictor
+- [x] Fixed Effect
+- [x] Random Slope
+- [ ] Random Grouping Variable
+
+
+# `Age`
+- [x] Fixed Effect
+- [ ] Random Slope
+- [ ] Random Grouping Variable
+
+# `Gender`
+- [x] Fixed Effect
+- [ ] Random Slope
+- [ ] Random Grouping Variable
+
+# `Contrast`
+Modified within-subject
+- [x] Fixed Effect
+- [x] Random Slope
+- [ ] Random Grouping Variable
+
+# `Contrast`
+Modified between-subject
+- [x] Fixed Effect
+- [ ] Random Slope
+- [ ] Random Grouping Variable
+
+# `Sentence ID`
+- [ ] Fixed Effect
+- [ ] Random Slope
+- [x] Random Grouping Variable
+
+
+# `Trial Number`
+- [x] Fixed Effect
+- [x] Random Slope
+- [ ] Random Grouping Variable
+```
 
 # Convergence & Singularity
 
 ## A more complex model
 ```{julia}
-#| echo: false
-
+#| echo: true
 d.contrastSquare = d.contrast .^ 2
-
 
 m_complex = lmm(@formula(estim_error ~ 1 + contrast + contrastSquare + (1 + contrast + contrastSquare | subject)), d)
 m_complex |> DisplayAs.Text
 
 ```
 
-**Common warnings:**
-- Predictor variables on very different scales: consider rescaling
-- Model failed to converge: degenerate Hessian with negative eigenvalues
+## Common warnings signs
+
+- R: Model failed to converge: degenerate Hessian with negative eigenvalues
+- Julia: `PosDefException`
 - Optimizers needs maaaany iterations
 
 <aside class="notes">
-Often, when using a more complex model, the model fit does not converge. We will have a look next on what to do then.
+Often, when using a more complex model, the model fit returns a singular model. We will have a look next on what to do then.
 </aside>
 
 
@@ -1320,20 +1403,22 @@ Often, when using a more complex model, the model fit does not converge. We will
 - Real convergence problems are rare in R::lme4, and extremely rare in MixedModels.jl
 - Typically the objective function is extremely flat and the optimizer struggles => change optimizer, change data (outliers?), missspecifications
 - Center predictors (remove mean) and scale (divide by SD of independent variable)
+
 ### Singularity
 **Most common issue** is singular fits
 
 #### How to Spot?
- -1/+1/0 in variance estimation
+- -1/+1/0 in variance estimation
+- `rePCA`
+- likelihood ratio tests
 
 #### Why?
 You don't have enough data to estimate the random effects structure
 
 #### How to fix?
 Different opinions:
-1) "Keep it maximal" - nothing to do, just use as is
-2) "Simplify" - simplify until non-singular
-
+1. "Keep it maximal" - nothing to do, just use as is
+2. "Simplify" - simplify until non-singular
 
 
 ## The ideal case
@@ -1429,16 +1514,26 @@ But if your hypothesis is on the interaction of `X&Y`, (following Matuschek) you
 
 ```{}
 y ~ 1 + X * Y + (1 + X * Y | group)
+
 y ~ 1 + X * Y + zerocorr(1 + X * Y | group)
+
 y ~ 1 + X * Y + zerocorr(1 + X + X&Y | group)
+
 y ~ 1 + X * Y + zerocorr(1 + X&Y| group)
+
 y ~ 1 + X * Y + (0 + X&Y | group)
 ```
 
 i.e. keep the random slopes for the effect you are most interested in the longest.
 
+## Words of warnings
+
+> A common misconception is that crossing subjects and items in the intercept term of LMEMs is sufficient for meeting the assumption of conditional independence, and that including random slopes is strictly unnecessary […]. Indeed, some researchers have already warned against using random-intercepts-only models when random slope variation is present (e.g., Baayen, 2008; Jaeger, 2011a; Roland, 2009; Schielzeth & Forstmeier, 2009)
+
+*Barr et. al. 2013*
 
 
+[Read a more detailed discussion on my blog](https://benediktehinger.de/blog/science/lmm-type-1-error-for-1condition1subject/)
 
 # Item effects
 
@@ -1447,14 +1542,14 @@ i.e. keep the random slopes for the effect you are most interested in the longes
 ```{julia}
 #| echo: false
 
-rng_mm = MersenneTwister(2)
+rng_mm = MersenneTwister(1)
 
 # Use MixedModelsSim to create a crossed design (subjects × stimuli)
 n_subj = 30
 n_stim = 30
-both_win = Dict(:condition => ["A", "B"])
+cond = Dict(:condition => ["A", "B"])
 
-design_crossed = simdat_crossed(rng_mm, n_subj, n_stim; both_win=both_win)
+design_crossed = simdat_crossed(rng_mm, n_subj, n_stim;item_btwn=cond)
 dat2 = DataFrame(design_crossed)
 dat2.subject = categorical(dat2.subj)
 dat2.stimulus = categorical(dat2.item)
@@ -1465,33 +1560,29 @@ dat2.condition = Int.(dat2.condition .== "B")
 σ_subj_intercept = 3.0
 σ_subj_slope = 1.0
 σ_stim_intercept = 10.0
-σ_stim_slope = 1.0
+#σ_stim_slope = 10.0
 β_fixed = [1.0, 0.0] 
 
 # Fit null model to get structure
 dat2.dv .= randn(nrow(dat2))
-m_crossed = fit(MixedModel, @formula(dv ~ 1 + condition + (1 + condition | subj) + (1 + condition | item)),
+m_crossed = fit(MixedModel, @formula(dv ~ 1 + condition + (1 + condition | subj) + (1  | item)),
                 dat2; contrasts=Dict(:condition => EffectsCoding(base=0)))
 
 # Random effects (relative to residual σ)
-re_subj_crossed = MixedModels.LowerTriangular([σ_subj_intercept/σ_err  0.0;
-                    0.0                     σ_subj_slope/σ_err])
-re_item_crossed = MixedModels.LowerTriangular([σ_stim_intercept/σ_err  0.0;
-                    0.0                     σ_stim_slope/σ_err])
 
-θ_crossed = createθ(m_crossed; subj=re_subj_crossed, item=re_item_crossed)
+θ_crossed = createθ(m_crossed; subj=create_re(σ_subj_intercept,σ_subj_slope), item=create_re(σ_stim_intercept))
 
 # Simulate data
 simulate!(m_crossed; β=β_fixed, σ=σ_err, θ=θ_crossed)
 dat2.y = m_crossed.y
 
 # Keep RE columns for downstream visualization
-dat2.RE_i .= 0.0
-dat2.RE_s .= 0.0
-dat2.RE2_i .= 0.0
-dat2.RE2_s .= 0.0
 
 meanList = combine(groupby(dat2, :condition), :y => mean => :m)
+meanItem = combine(groupby(dat2, [:item,:condition]), :y => mean => :m)
+meanSubj = combine(groupby(dat2, [:subject,:condition]), :y => mean => :m)
+lmm(@formula(y ~ condition + (1 + condition | subject)), dat2);
+
 ```
 
 ```{julia}
@@ -1500,15 +1591,18 @@ meanList = combine(groupby(dat2, :condition), :y => mean => :m)
 #| fig-height: 4
 
 # Plot by subject
-data(dat2) * mapping(:subject, :y, color=:condition) * visual(Scatter; markersize=3) |> draw
-current_figure()
+f = Figure()
+ax = f[1,1] = Axis(f)
+data(meanSubj) * mapping(:subject, :m, color=:condition=>nonnumeric) * visual(Scatter) |> x->draw!(ax,x)
 
-# Plot by condition
-data(dat2) * mapping(:condition, :y, color=:subject) * visual(Lines; alpha=0.5) |> x->draw!(current_axis(), x)
-data(dat2) * mapping(:condition, :y, color=:condition) * visual(Scatter; markersize=3) |> x->draw!(current_axis(), x)
-current_figure()
+data(meanSubj) * mapping(:condition, :m, color=:condition=>nonnumeric) * visual(Scatter)+
+data(meanSubj) * mapping(:condition, :m) * visual(Lines,color=:black) |> x->draw!(Axis(f[1,2]),x)
+ f
 
-# Model summary
+```
+
+## Model summary
+```{julia}
 mm = lmm(@formula(y ~ condition + (1 + condition | subject)), dat2)
 mm|> DisplayAs.Text
 ```
@@ -1524,9 +1618,19 @@ What a nice effect! Write paper and end of story?
 #| fig-width: 8
 #| fig-height: 4
 
-data(dat2) * mapping(:stimulus, :y) * visual(Scatter; alpha=0.3) |> draw
-current_figure()
+data(sort!(dat2,:condition)) * mapping(:stimulus, :y) * visual(Scatter; alpha=0.3) |> draw
+
 ```
+
+## But very high stimulus variance!
+```{julia}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 4
+
+data(sort!(dat2,:condition)) * mapping(:stimulus, :y,color=:condition=>nonnumeric) * visual(Scatter; alpha=0.3) |> x->draw(x,legend=(;show=false))
+```
+
 
 ## But very high stimulus variance
 ```{julia}
@@ -1534,62 +1638,51 @@ current_figure()
 #| fig-width: 8
 #| fig-height: 4
 
-data(dat2) * mapping(:stimulus, :y, color=:condition=>nonnumeric) * visual(Scatter; alpha=0.3) |> draw
-current_figure()
+# Plot by subject
+f = Figure()
+ax = f[1,1] = Axis(f)
+data(meanItem) * mapping(:item, :m, color=:condition=>nonnumeric) * visual(Scatter) |> x->draw!(ax,x)
+
+data(meanItem) * mapping(:condition, :m, color=:condition=>nonnumeric) * visual(Scatter)+
+data(meanList) * mapping(:condition, :m) * visual(Lines,color=:black) |> x->draw!(Axis(f[1,2]),x)
+ f
 ```
 
-A high variance can lead to sporadic effects
+High unmodelled variance can lead to sporadic effects.
 
 <aside class="notes">
 If we group the data not by subject, but by stimulus we see two types of variation. Variation for each stimulus (each dot is a subject) and variation between stimuli (the means of the stimuli are very different)
 </aside>
 
-## You should include it in your model
 
 
+## Model with stimulus random effect
 ```{julia}
-#| echo: false
-#| fig-width: 8
-#| fig-height: 4
-
-data(dat2) * mapping(:stimulus, :y, color=:condition) * visual(Scatter; alpha=0.3) |> draw
-current_figure()
-
-# Model with stimulus random effect
-mm2 = lmm(@formula(y ~ condition + (1 + condition | subject) + (1 | stimulus)), dat2)
+mm2 = lmm(@formula(y ~ condition + (1 + condition | subject) + (1 + condition | stimulus)), dat2)
 mm2 |> DisplayAs.Text
 ```
 
+
 Often it is necessary to add multiple random effects! Examples are: subjects, stimuli (images, words, etc)
 
-``@formula(y ~ 1 + condA + (1 + condA | subject) + (1 + condA | stimulus))``
+``@formula(y ~ 1 + condA + (1 + condA | subject) + (1 | stimulus))``
 
 <aside class="notes">
 If we arbitrarily divide the stimuli in two categories, we will always get a small difference (in relation to the variance of stimuli this difference is small, in relation to the variance of subjects this difference is huge!). If we do not model the stimulus variation we would conclude that there is a large effect of condition - whereas it is just a random partition of stimuli!
+
 Luckily it is very easy to include this into the model formula.
 </aside>
 
 
+## What to generalize over?
 
+### Why do we add subject random effects?
+We want to generalize over subjects
 
-## When to include what
+### Why should we add item random effects?
+We want to generalize over items!
 
-### Some guidance:
-
-- Predictor is a subset of a population? 
-      - => random/grouping variable e.g. subjects, images, words
-- Predictor is within subject/grouping? 
-      - => random coefficients
-- Predictor is between subject/grouping or aggregated? 
-     - => only fixed coefficient
-
-<aside class="notes">
-Sometimes its clear, e.g. you record 40 images of faces and the faces are a random example from all face stimuli.
-sometimes its difficult, e.g. you measure 5 subjects, are these enough to estimate the random variance parameter?
-
-[see discussion here](https://stats.stackexchange.com/questions/37647/minimum-number-of-levels-for-a-random-effects-factor)
-
-</aside>
+If we leave one of these two, we will ($\approx$) make statistical inferences on the sample at hand, without much generalization.
 
 
 
@@ -1646,16 +1739,6 @@ m0 = fit(MixedModel, form, df; contrasts=contrasts)
 
 ```{julia}
 #| echo: false
-
-# Helper to create random effects matrices
-# (assumes zero correlations for simplicity)
-function create_re(s_intercept, s_slope1, s_slope2)
-    σ = 1.0  # will be scaled by residual σ
-    L = [s_intercept  0        0;
-         0            s_slope1 0;
-         0            0        s_slope2]
-    return LowerTriangular(L)
-end
 
 # Between-items: intercept=1.3, age=0.35, context=0.75 (relative to residual σ)
 re_item = create_re(1.3, 0.35, 0.75)

@@ -1,7 +1,7 @@
 ---
 title: Applied Generalized Linear (Mixed) Modelling
 author: "Benedikt Ehinger"
-date: "March 19th, 2018"
+date: last-modified
 format:
   revealjs:
     incremental: false
