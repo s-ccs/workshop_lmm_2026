@@ -32,9 +32,6 @@ md"""
 	**How to use**: Code cells contain `!!!` placeholders. Replace each `!!!` with the correct value. Read the task description and hints carefully to figure out what goes where.
 """
 
-# ╔═╡ aa1e361a-ebff-47a0-94fa-118c0096e6df
-methods(protip)
-
 # ╔═╡ c174da14-4d88-419e-a329-03f7b993278b
 PlutoTeachingTools.protip(
 
@@ -64,21 +61,16 @@ L. E. Matzen, B. C. Howell, M. C. S. Trumbo and K. M. Divis, "Numerical and Visu
 # ---
 
 md"""
-## Load and Prepare Data
+# Load and Prepare Data
 """
 
 # ╔═╡ 906f0099-2e11-49be-96c6-09aa56cbb178
-  begin
-      d = CSV.read("decisionDF.csv", DataFrame)  # !!! → file path
+begin
+    data_path = download("https://raw.githubusercontent.com/s-ccs/workshop_lmm_2026/refs/heads/main/decision_df.csv")
+        
+    d = CSV.read(data_path, DataFrame)
 
   end
-
-# ╔═╡ 77c2c3ce-aa7b-49e0-a4c1-be350fdc3896
-answer_box("""
-Just warming up!!
-		   
-`d = CSV.read("decisionDF_cut.csv", DataFrame)  # !!! → file path`		   
-""")
 
 # ╔═╡ 34509c2c-0309-4fe6-8965-8af67cb59c74
 md"""
@@ -186,6 +178,11 @@ begin
   end
 end
 ```""")
+
+# ╔═╡ 6fd48981-f831-4d3f-be1c-7c742349bc8c
+md"""
+# Exercises
+"""
 
 # ╔═╡ da0fe4b6-3828-42a1-a2b1-a029ff36e5aa
 # ---
@@ -928,14 +925,14 @@ m1 |> display_as
 # ╔═╡ 0b3b5fe9-8c2a-481c-85af-ad26ff072175
 TableOfContents()
 
-# ╔═╡ 99dba340-336b-44f2-b8ff-f0a965c8707e
-
-
 # ╔═╡ d4d7a07a-6fd0-4cb8-a56f-d69aaabb09a5
+# ╠═╡ disabled = true
+#=╠═╡
 begin
     _d = select(d,["participant_id","denominator","arrangement","decisionTime","probability","iconicity"])
     CSV.write("decisionDF_cut.csv",_d)
 end
+  ╠═╡ =#
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -3138,11 +3135,9 @@ version = "4.1.0+0"
 
 # ╔═╡ Cell order:
 # ╠═794ce139-4ddf-4ad2-bee9-12484e282263
-# ╠═aa1e361a-ebff-47a0-94fa-118c0096e6df
-# ╠═c174da14-4d88-419e-a329-03f7b993278b
+# ╟─c174da14-4d88-419e-a329-03f7b993278b
 # ╟─6aaa66d2-abcd-4cda-9970-cbde580014be
 # ╠═906f0099-2e11-49be-96c6-09aa56cbb178
-# ╟─77c2c3ce-aa7b-49e0-a4c1-be350fdc3896
 # ╟─34509c2c-0309-4fe6-8965-8af67cb59c74
 # ╠═1c851de1-face-49a6-9a5c-61a1a5484d1b
 # ╟─a2494d57-e9a1-4de4-9a82-24986a314ac4
@@ -3158,6 +3153,7 @@ version = "4.1.0+0"
 # ╟─67e50e54-80e5-4f78-8499-914a5b819cd9
 # ╠═d65c72db-4e91-413f-82d5-a5695df71c47
 # ╟─c63e2019-2a18-45df-b576-6a20246464d9
+# ╟─6fd48981-f831-4d3f-be1c-7c742349bc8c
 # ╟─da0fe4b6-3828-42a1-a2b1-a029ff36e5aa
 # ╟─aba293d5-4e1e-4cf8-b1c8-375a56f2d0a1
 # ╠═3a0e29fa-aaaa-4c1c-bcd0-7ae9407da9b6
@@ -3275,7 +3271,6 @@ version = "4.1.0+0"
 # ╠═fd7ec08a-8b37-11f1-8943-55d2d57670f7
 # ╠═939fdd7e-d43c-4153-9095-f8a42d87d405
 # ╠═0b3b5fe9-8c2a-481c-85af-ad26ff072175
-# ╠═99dba340-336b-44f2-b8ff-f0a965c8707e
 # ╠═d4d7a07a-6fd0-4cb8-a56f-d69aaabb09a5
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
