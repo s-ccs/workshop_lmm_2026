@@ -26,10 +26,6 @@ md"""
 > Wildfire evacuation experiment: participants view probability displays and decide whether to evacuate. The dependent variable is `decisionTime` (reaction time in ms).
 
 
-![]()
-
-!!! important
-	**How to use**: Code cells contain `!!!` placeholders. Replace each `!!!` with the correct value. Read the task description and hints carefully to figure out what goes where.
 """
 
 # ╔═╡ c174da14-4d88-419e-a329-03f7b993278b
@@ -57,6 +53,9 @@ L. E. Matzen, B. C. Howell, M. C. S. Trumbo and K. M. Divis, "Numerical and Visu
 - **Decision_time** – How long it took the participant to make their decision during the trial in milliseconds
 ""","Want to learn more about the experiment?")
 
+# ╔═╡ 99c30a73-5fb1-4fbb-856c-5a56251936c4
+PlutoUI.RemoteResource("https://raw.githubusercontent.com/s-ccs/workshop_lmm_2026/refs/heads/main/assets/task_explanation.png")
+
 # ╔═╡ 6aaa66d2-abcd-4cda-9970-cbde580014be
 # ---
 
@@ -71,6 +70,13 @@ begin
     d = CSV.read(data_path, DataFrame)
 
   end
+
+# ╔═╡ 189d91f9-e54d-4a51-9dca-9d86b436d572
+md"""
+
+!!! important
+	**How to use**: Code cells contain `!!!` placeholders. Replace each `!!!` with the correct value. Read the task description and hints carefully to figure out what goes where.
+"""
 
 # ╔═╡ 34509c2c-0309-4fe6-8965-8af67cb59c74
 md"""
@@ -3134,10 +3140,12 @@ version = "4.1.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═794ce139-4ddf-4ad2-bee9-12484e282263
+# ╟─794ce139-4ddf-4ad2-bee9-12484e282263
+# ╟─99c30a73-5fb1-4fbb-856c-5a56251936c4
 # ╟─c174da14-4d88-419e-a329-03f7b993278b
 # ╟─6aaa66d2-abcd-4cda-9970-cbde580014be
 # ╠═906f0099-2e11-49be-96c6-09aa56cbb178
+# ╟─189d91f9-e54d-4a51-9dca-9d86b436d572
 # ╟─34509c2c-0309-4fe6-8965-8af67cb59c74
 # ╠═1c851de1-face-49a6-9a5c-61a1a5484d1b
 # ╟─a2494d57-e9a1-4de4-9a82-24986a314ac4
