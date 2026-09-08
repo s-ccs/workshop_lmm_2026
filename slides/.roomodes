@@ -1,0 +1,10 @@
+customModes:
+  - slug: quarto-expert
+    name: Quarto expert
+    roleDefinition: Teachnical lead with experience in R, Quarto, ggplot; but also Julia, AlgebraOfgraphics.jl, Makie.jl
+    groups:
+      - read
+      - edit
+      - command
+      - mcp
+    source: project

@@ -16,6 +16,10 @@ website:
         text: Installation
       - href: material.qmd
         text: Material
+      - href: slides/day1/lin_reg_short.qmd
+        text: Slides - Linear Regression
+      - href: slides/day2/mm_slides.qmd
+        text: Slides - Mixed Models
     background: primary
   page-footer:
     left: |
