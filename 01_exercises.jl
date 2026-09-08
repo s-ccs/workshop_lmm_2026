@@ -25,9 +25,40 @@ md"""
 # Mixed Models Exercises
 > Wildfire evacuation experiment: participants view probability displays and decide whether to evacuate. The dependent variable is `decisionTime` (reaction time in ms).
 
+
+![]()
+
 !!! important
 	**How to use**: Code cells contain `!!!` placeholders. Replace each `!!!` with the correct value. Read the task description and hints carefully to figure out what goes where.
 """
+
+# ╔═╡ aa1e361a-ebff-47a0-94fa-118c0096e6df
+methods(protip)
+
+# ╔═╡ c174da14-4d88-419e-a329-03f7b993278b
+PlutoTeachingTools.protip(
+
+md"""
+### Description
+The data is corrected during a study that replicated Matzen et al. (2023) study on decision-making with icon arrays. 
+
+They presented participants with a wild fire scenario in which they had to imagine they owned a cabin in the woods that was at risk of burning down during a wild fire. 
+
+Participants decided to stay or evacuate based on the icon array and probability shown. 
+
+!!! important
+	The data is part of a paper that is currently under review. Please do not distribute this data beyond this course!
+
+L. E. Matzen, B. C. Howell, M. C. S. Trumbo and K. M. Divis, "Numerical and Visual Representations of Uncertainty Lead to Different Patterns of Decision Making," in IEEE Computer Graphics and Applications, vol. 43, no. 5, pp. 72-82, 1 Sept.-Oct. 2023, doi: 10.1109/MCG.2023.3299875.
+
+### Variables
+- **Participant_id** – The ID participants received. Unique for each participant
+- Format – The condition and denominator of the trial as seen in the image above. Has been split into the ‘denominator’ and ‘iconicity’ variables.
+- **Arrangement** – Whether the icon arrays were randomized or ordered during the trial as seen in the image above. Natural frequencies cannot be ordered, hence the “NA” entries there.
+- **Iconicity** – The visual design of the icon arrays as seen in the image above. They are one of three: natural frequencies, abstract and iconic.
+- **Probability** – The probability been shown by the icon arrays during the trial. They were either 0%, 10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90% or 100%. The image above shows all icon arrays in a probability of 50%
+- **Decision_time** – How long it took the participant to make their decision during the trial in milliseconds
+""","Want to learn more about the experiment?")
 
 # ╔═╡ 6aaa66d2-abcd-4cda-9970-cbde580014be
 # ---
@@ -37,7 +68,17 @@ md"""
 """
 
 # ╔═╡ 906f0099-2e11-49be-96c6-09aa56cbb178
-  d = CSV.read(!!!, DataFrame)  # !!! → file path
+  begin
+      d = CSV.read("decisionDF.csv", DataFrame)  # !!! → file path
+
+  end
+
+# ╔═╡ 77c2c3ce-aa7b-49e0-a4c1-be350fdc3896
+answer_box("""
+Just warming up!!
+		   
+`d = CSV.read("decisionDF_cut.csv", DataFrame)  # !!! → file path`		   
+""")
 
 # ╔═╡ 34509c2c-0309-4fe6-8965-8af67cb59c74
 md"""
@@ -886,6 +927,15 @@ m1 |> display_as
 
 # ╔═╡ 0b3b5fe9-8c2a-481c-85af-ad26ff072175
 TableOfContents()
+
+# ╔═╡ 99dba340-336b-44f2-b8ff-f0a965c8707e
+
+
+# ╔═╡ d4d7a07a-6fd0-4cb8-a56f-d69aaabb09a5
+begin
+    _d = select(d,["participant_id","denominator","arrangement","decisionTime","probability","iconicity"])
+    CSV.write("decisionDF_cut.csv",_d)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -3088,8 +3138,11 @@ version = "4.1.0+0"
 
 # ╔═╡ Cell order:
 # ╠═794ce139-4ddf-4ad2-bee9-12484e282263
+# ╠═aa1e361a-ebff-47a0-94fa-118c0096e6df
+# ╠═c174da14-4d88-419e-a329-03f7b993278b
 # ╟─6aaa66d2-abcd-4cda-9970-cbde580014be
 # ╠═906f0099-2e11-49be-96c6-09aa56cbb178
+# ╟─77c2c3ce-aa7b-49e0-a4c1-be350fdc3896
 # ╟─34509c2c-0309-4fe6-8965-8af67cb59c74
 # ╠═1c851de1-face-49a6-9a5c-61a1a5484d1b
 # ╟─a2494d57-e9a1-4de4-9a82-24986a314ac4
@@ -3222,5 +3275,7 @@ version = "4.1.0+0"
 # ╠═fd7ec08a-8b37-11f1-8943-55d2d57670f7
 # ╠═939fdd7e-d43c-4153-9095-f8a42d87d405
 # ╠═0b3b5fe9-8c2a-481c-85af-ad26ff072175
+# ╠═99dba340-336b-44f2-b8ff-f0a965c8707e
+# ╠═d4d7a07a-6fd0-4cb8-a56f-d69aaabb09a5
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
