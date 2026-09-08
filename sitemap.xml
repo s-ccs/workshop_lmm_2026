@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://s-ccs.github.io/workshop_lmm_2026/slides/day1/lin_reg_short.html</loc>
+    <lastmod>2026-09-08T13:41:42.433Z</lastmod>
+  </url>
+  <url>
     <loc>https://s-ccs.github.io/workshop_lmm_2026/material.html</loc>
-    <lastmod>2026-09-07T15:58:14.715Z</lastmod>
+    <lastmod>2026-09-08T13:41:42.300Z</lastmod>
   </url>
   <url>
     <loc>https://s-ccs.github.io/workshop_lmm_2026/program.html</loc>
-    <lastmod>2026-09-07T15:58:14.715Z</lastmod>
+    <lastmod>2026-09-08T13:41:42.300Z</lastmod>
   </url>
   <url>
     <loc>https://s-ccs.github.io/workshop_lmm_2026/index.html</loc>
-    <lastmod>2026-09-07T15:58:14.715Z</lastmod>
+    <lastmod>2026-09-08T13:41:42.299Z</lastmod>
   </url>
   <url>
     <loc>https://s-ccs.github.io/workshop_lmm_2026/installation.html</loc>
-    <lastmod>2026-09-07T15:58:14.715Z</lastmod>
+    <lastmod>2026-09-08T13:41:42.300Z</lastmod>
+  </url>
+  <url>
+    <loc>https://s-ccs.github.io/workshop_lmm_2026/slides/day2/mm_slides.html</loc>
+    <lastmod>2026-09-08T13:41:42.541Z</lastmod>
   </url>
 </urlset>

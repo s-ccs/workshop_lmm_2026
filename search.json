@@ -1,5 +1,516 @@
 [
   {
+    "objectID": "slides/day1/lin_reg_short.html#slides-my-presentation-style",
+    "href": "slides/day1/lin_reg_short.html#slides-my-presentation-style",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Slides & my Presentation style",
+    "text": "Slides & my Presentation style\nClick this link to add notes to the slides\n this adds ?showNotes=true to the file \nYou can download the pdf or print them yourself:\n click this link for pdf printable (use google chrome)\n click this link for pdf printable + notes\nHTML is best viewed in chrome\n\nI don’t like words on my slides. If you prefer to read instead of listen, I recommend several books at the end of the lecture.\nThe webpage is best viewed in google chrome, you can also simply download the pdfs. There will be two versions, one with and one without notes. but if you are reading this text, you already found the notes ;-)"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#purpose-of-statistics-1",
+    "href": "slides/day1/lin_reg_short.html#purpose-of-statistics-1",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Purpose of statistics",
+    "text": "Purpose of statistics\n\nOrganization\n\n \n\nDescription\n\n \n\nInference\n\n\nOrganization means that you get structure in how you look at your data. One word of advice, look up the “tidy dataframe”. For many datasets this is the way to go: each variable gets one column, each observation gets one row - nice and easy.\nDescription Descriptive statistics are all kind of means, variances, plots … that you can make of your data sample.\nInference As soon as you want to infer from your sample to your population (later more) you need inference statistics."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#why-statistics-in-the-first-place",
+    "href": "slides/day1/lin_reg_short.html#why-statistics-in-the-first-place",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Why statistics in the first place?",
+    "text": "Why statistics in the first place?\nBecause of Variation\n\nsources of variationsource-youtube-video of image\n\nThere are many answers, variation is just one motivation. - natural : The variation that is natural to the sample, e.g. apples have a distribution of redness, not a single value - sampling error: The variation we get when we take a subset of a population. I.e. two baskets of red apples have different sample distributions of redness - explainable: The variation we can explain by e.g. knowing which apple belongs to which variety of apples - non-sampling error: The variation we get e.g. non-randomly samplig apple trees (get all apples from one tree, but the orchard is actually mixed variety - we are missing out on other trees)\n“The idea of an infinite population distributed in a frequency distribution in respect of one or more characters is fundamental to all statistical work. From a limited experience., we may obtain some idea of the infinite hypothetical population from which our sample is drawn, and so of the probable nature of future samples to which our conclusions are to be applied. If a second sample belies this expectation we infer that it is. drawn from a different population; that the treatment to which the second sample. had been exposed did in fact make a material difference, or. had materially altered. Critical tests of this kind may be called tests of significance, and when such tests are available we may discover whether a second sample is or is not significantly different from the first” (Fisher, 19542, p.41)."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#most-important-lesson",
+    "href": "slides/day1/lin_reg_short.html#most-important-lesson",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Most important lesson",
+    "text": "Most important lesson\nAlways visualize your data\n\n…make both calculations and graphs. Both sorts of output should be studied; each will contribute to understanding. F. J. Anscombe, 1973\n\n\ndistributions\nThe point here is, that only looking at results of tests, means etc. can never show the whole story. The first thing I do when someone asks me to help them with their statistics, I look at their data!"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#button-pressing-experiment",
+    "href": "slides/day1/lin_reg_short.html#button-pressing-experiment",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Button Pressing Experiment",
+    "text": "Button Pressing Experiment\n\n\n2×2 DataFrame\n\n\n\nRow\nround_square\nreactiontime\n\n\n\nString\nFloat64\n\n\n\n\n1\nround\n202.222\n\n\n2\nsquare\n217.193\n\n\n\n\n\n\n\ndata(d) * mapping(:round_square,:reactiontime) * visual(Beeswarm;algorithm=:pseudorandom) |&gt; draw\ndata(d_mean) * mapping(:round_square,:reactiontime) * visual(Scatter,color=:red) |&gt; x-&gt;draw!(current_axis(),x)\n\ncurrent_figure()\n\n\n\n\n\nIn a simple reaction time experiment we ask subjects to click on rounded or square buttons on computer screen."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#there-could-be-confounds",
+    "href": "slides/day1/lin_reg_short.html#there-could-be-confounds",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "There could be confounds!",
+    "text": "There could be confounds!\n\ndata(d) * mapping(:round_square,:reactiontime,color=:button_size) * visual(Beeswarm;algorithm=:pseudorandom) |&gt; draw\n\n\n\n\n\nUhoh, button size was not controlled for, this might lead to problems in your conclusion!"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#preview-multiple-regression-to-the-rescue",
+    "href": "slides/day1/lin_reg_short.html#preview-multiple-regression-to-the-rescue",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Preview: Multiple regression to the rescue",
+    "text": "Preview: Multiple regression to the rescue\n\\(reactiontime = Average + isRound + buttonSize\\)\n\\(reactiontime = \\beta_{average} + \\beta_1 \\cdot isRound + \\beta_2 \\cdot buttonSize\\)\n\n\n\nLinear Models allow to structure and separate effects \nLinear Models allow to predict values (e.g. what if button-size would be double the size?) \nLinear Models can be easily extended for non-linear effects (e.g. GAM), complicated distributions(e.g. Yes/No aka logistic regression) or multiple outcomes (General Linear Model)\n\n\n\n\nLinear regression allows one to model multiple influences at the same time. We structure our problem and try to disentangle influences. This slide is used as a motivation and the concepts will be explained on the next slides."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#the-simple-linear-regression",
+    "href": "slides/day1/lin_reg_short.html#the-simple-linear-regression",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "The simple linear regression",
+    "text": "The simple linear regression\n\n\n\n\n\n\nfit = lm(@formula(reactiontime ~ 1 + button_size), d)\n\n\nThe lm function is extremely important. Helpful other functions that work nicely are: predict, confint, residuals"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#lines-are-simple-intercept-slope",
+    "href": "slides/day1/lin_reg_short.html#lines-are-simple-intercept-slope",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Lines are simple! Intercept + Slope",
+    "text": "Lines are simple! Intercept + Slope\n\n\n\n\n\n\\[ reactiontime = \\beta_0 + buttonSize * \\beta_1 \\]   Red Line: \\([reactiontime | buttonSize=10] - [reactiontime | buttonSize=5]\\)\n\\(=\\beta_0 + 10\\beta_1 - (\\beta_0 + 5\\beta_1)\\) \\(=5\\beta_1\\)\n\nWhat do the parameters mean? \\(\\beta_0\\) is called the Intercept. It reflects the expected reactiontime when buttonSize is 0. \\(\\beta_1\\) reflects the increase in reactiontime per one-unit increase of buttonSize."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#which-line-to-choose",
+    "href": "slides/day1/lin_reg_short.html#which-line-to-choose",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Which line to choose?",
+    "text": "Which line to choose?\n\n\n\n\n\n\nHere we show several possible lines, all could fit the data “kind of good”. The question is, how to find the best one? Is there a single best one? Or maybe its even better to describe a whole distribution of bestfitting lines."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#residuals-l2-norm",
+    "href": "slides/day1/lin_reg_short.html#residuals-l2-norm",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Residuals / L2 Norm",
+    "text": "Residuals / L2 Norm\n\n\n\n\n\nMinimizing the residuals maximizes the fit\nL2-Norm (Least Squares): \\(min(|residual_i|_2)\\)\n\nThe hat (\\(\\hat{ }\\)) means estimate (i.e. the blue line). In least-squares (the name has it!) we try to minimize the squared residuals. For this well-behaved problem there is a closed solution form (more to it later)."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#in-our-example",
+    "href": "slides/day1/lin_reg_short.html#in-our-example",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "In our example",
+    "text": "In our example\n\n\n\n\n\nData: \\(y = \\beta_0 + x_1 \\beta_1 + e_i\\)\nPrediction: \\(\\hat{y} = \\beta_0 + x_1 \\beta_1\\)\nResiduals: \\(e_i = y - \\hat{y}\\)"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#in-julia",
+    "href": "slides/day1/lin_reg_short.html#in-julia",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "in Julia",
+    "text": "in Julia\n\nfit = lm(@formula(reactiontime ~ 1 + button_size), d)\ncoeftable(fit)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n119.401\n9.1716\n13.02\n&lt;1e-22\n101.2\n137.601\n\n\nbutton_size\n10.9463\n0.934856\n11.71\n&lt;1e-19\n9.09112\n12.8015\n\n\n\n\n\n\nThe important bits are the coefficient estimates. They show you the intercept and the slope. standard error gives the size of the sampling distribution of these parameters. The t-value is simply the estimate divided by the standard error (more to that later). Because we know the t-distribution analytically, we can easily calculate the area under a t-distribution with mean 0 (=&gt;\\(H_0\\) model): the p-value"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#explained-variance",
+    "href": "slides/day1/lin_reg_short.html#explained-variance",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Explained Variance",
+    "text": "Explained Variance\n\n\n\n\n\n\\(var(y)\\) vs. \\(var(e)\\) \\(R^2 = 1 - \\frac{var(e)}{var(y)}\\)\n\nThe right panel again shows the left panel with the \\(\\hat y\\) removed. The, so-called, marginals at the side, depict the total variation in the data. From this exaggerated example it is quite clear, that the variance of the residuals is reduced.\nThis can be quantified by the \\(R^2\\). Its simply the ratio of what remains (residuals) divided by the total variation (before model fit). This would give us “variance remaining”, thus we do 1-variance remaining to get variance explained."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#single-outlier",
+    "href": "slides/day1/lin_reg_short.html#single-outlier",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Single outlier",
+    "text": "Single outlier\n Especially true for small sample sizes\n\nOutliers can always influence your results. There are certain methods that can make your regression / your estimates robust against outliers (these have the fitting name, robust statistics). A very good book on robust statistics is Wilcox “Robust Statistics”. Great tools are trimming (and even better winsorizing) and weighted least square regression. Ways to identify outliers are Cook’s-Distance or Leverage plots. All these things are extending the scope of the course too much and will likely not be discussed much."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#section",
+    "href": "slides/day1/lin_reg_short.html#section",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "",
+    "text": "fit_multi = lm(@formula(reactiontime ~ 1 + button_size + is_square + button_size_log), d)\ncoeftable(fit_multi)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n49.3006\n8.98408\n5.49\n&lt;1e-06\n31.4674\n67.1339\n\n\nbutton_size\n-0.0691646\n1.47265\n-0.05\n0.9626\n-2.99236\n2.85403\n\n\nis_square\n-54.9997\n6.75506\n-8.14\n&lt;1e-11\n-68.4084\n-41.591\n\n\nbutton_size_log\n101.495\n9.6174\n10.55\n&lt;1e-17\n82.4045\n120.585\n\n\n\n\n\n\nWe can include multiple predictors in our model. The interpretation is the same (or very similar) as with a single one. If you look at the output, the important fields are below “Coefficients”. Especially the column with “Estimate” is important. Std Error (means Standarderror) is also important, it gives you the estimate of the width of the sampling distribution. If this width is very large (compared to your estimate), you are quite unsure about your estimate, if it is small you are more sure. This is directly reflected in the ratio of the two, \\(\\frac{estimate}{Std. Error}\\) which is also called the t-value. Conveniently this is the next column. If we remember that there is only a single statistical test, one can now calculate a p-value for this t-value. It reflects the probability to see such a ratio of mean/SE assumed that the mean of the population is actually 0 (the \\(H_0\\)). Important: The last step is ONLY valid, if you ALSO assume that the data-generating mechanism (the population) uses normally-distributed errors (that is, the residuals are a sample from a normal distribution).\nInterpretation: The intercept reflects the value when all other predictors are 0 (i.e. expected reactiontime for a round button with button size 0 and no quadratic contribution). It should be immediately clear that the intercept does not necessarily reflect a useful value. The nice thing about such an additive model is that each effect estimate can be interpreted without the other ones (also called additive effects)"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#with-two-predictors-you-span-a-plane",
+    "href": "slides/day1/lin_reg_short.html#with-two-predictors-you-span-a-plane",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "With two predictors you span a plane",
+    "text": "With two predictors you span a plane\n\ntwo predictors span a plane\nA single predictor spans a line. Two predictors span a plane. The plane is again fitted by minimizing the residuals. If one extrapolates to more predictors, we can phrase linear regression as: “Which plane of the column subspace of X, minimizes the residuals”"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#overlapping-variance",
+    "href": "slides/day1/lin_reg_short.html#overlapping-variance",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Overlapping variance",
+    "text": "Overlapping variance\n\nvenn diagram of variance explained\nThree different cases. The venndiagram circles show the variance of predictors (\\(X_1\\) and \\(X_2\\)) and the dependent variable \\(Y\\). In the first case, all is fine, \\(X_1\\) and \\(X_2\\) are uncorrelated and do not influence eachother. In the second case, there is some overlap. The linear model splits the variance up to the two predictors.\nIn the third case, everything \\(X_2\\) can explain, is explained already by \\(X1\\). This is usually a problem and you need to think to drop or combine predictors.\nYet another one is not displayed here, surpression. We will see in a second what it does (it is also difficult to show using venn-diagrams)."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#perfect-redundant",
+    "href": "slides/day1/lin_reg_short.html#perfect-redundant",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Perfect redundant",
+    "text": "Perfect redundant\n\ndata_redundant = copy(d)\ndata_redundant.button_size_scaled = data_redundant.button_size .* 10\ncoeftable(lm(@formula(reactiontime ~ button_size + button_size_scaled), data_redundant))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n119.401\n9.1716\n13.02\n&lt;1e-22\n101.2\n137.601\n\n\nbutton_size\n0.0\nNaN\nNaN\nNaN\nNaN\nNaN\n\n\nbutton_size_scaled\n1.09463\n0.0934856\n11.71\n&lt;1e-19\n0.909112\n1.28015\n\n\n\n\n\n\nAs you can see, Julia automatically removed one of the predictors that was redundant"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#partially-redundant",
+    "href": "slides/day1/lin_reg_short.html#partially-redundant",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Partially redundant",
+    "text": "Partially redundant\n\ndata_redundant = copy(d)\ndata_redundant.button_size_noise = data_redundant.button_size .+ randn(nrow(data_redundant)) .* 0.5\ncoeftable(lm(@formula(reactiontime ~ button_size), data_redundant))\ncoeftable(lm(@formula(reactiontime ~ button_size + button_size_noise), data_redundant))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n121.619\n9.18813\n13.24\n&lt;1e-22\n103.383\n139.855\n\n\nbutton_size\n26.6002\n9.47262\n2.81\n0.0060\n7.79963\n45.4007\n\n\nbutton_size_noise\n-15.8467\n9.54331\n-1.66\n0.1000\n-34.7875\n3.09416\n\n\n\n\n\nMulticollinearity is usually not so obvious\n\nOn this slide the important bits are the standard errors (SE) of the estimates. The upper model without a redundant predictor, the lower one with a redundant predictor. The top most code bit shows you how the redundancy wa introduced.\nNot all statistic programs are as wellbehaved as R. Some might throw an error. In any case, if there is high redundancy, SE calculation can be off quite a bit.\nmulticollinearity / redundancy will be usually way less obvious. E.g. it could be, that a certain combination of your predictors together explain the same variance as a certain other combination. Thus, just with pairwise correlations between predictors you cannot find out whether you have collinearity. The variance influence factor might help you to check this. If you worry about redundancy/collinearity you should should follow that procedure."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#suppressors-including-unrelated-variables-can-improve-modelfit",
+    "href": "slides/day1/lin_reg_short.html#suppressors-including-unrelated-variables-can-improve-modelfit",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Suppressors: Including unrelated variables can improve modelfit",
+    "text": "Suppressors: Including unrelated variables can improve modelfit\n\n\n60-element Vector{Float64}:\n  0.36020493989108876\n -2.364065499304173\n -0.6933471842834695\n  1.223407336606843\n  0.09694233607135772\n  0.8519591347956332\n -0.03780484924142269\n -0.10298102122978214\n  0.25517753910976637\n -1.4250363515628095\n  ⋮\n  1.1582755511612035\n  1.4344332327698979\n  0.0036869629296116813\n  1.2756442255575386\n  1.4520107473116948\n  1.4058397241496383\n -1.1645405998031197\n  0.8671328855402312\n -0.12061866684758638\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n0.0736531\n0.131952\n0.56\n0.5789\n-0.190478\n0.337784\n\n\nOV\n-0.00695822\n0.0129088\n-0.54\n0.5919\n-0.032798\n0.0188815"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#a-graphical-intuition",
+    "href": "slides/day1/lin_reg_short.html#a-graphical-intuition",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "a graphical intuition",
+    "text": "a graphical intuition\n\nsurpressor animation\nA suppressor (S) is a independent variable, that is not correlated with the Y per se, but changes the estimate of other predictors (OV). Note how the coefficients of OV are completly changed by adding another variable. The animation visualizes why this can be the case. Imagine you have a true relationship between X and Y. But then a little devil adds noise to the X variable. The relationship vanishes (this is what is animated). But if you know what kind of noise was added to X (in this case S), and include it in your model, the information of the true relationship can be recovered. If you want to understand why exactly have a look at this nice stackexchange thread\nThe notion of suppression is also present in descriptions of confounding. The classic example of a suppressor is a confounding hypothesis described by Horst (1941) involving the prediction of pilot performance from measures of mechanical and verbal ability. When the verbal ability predictor was added to the regression of pilot performance on mechanical ability, the effect of mechanical ability increased. This increase in the magnitude of the effect of mechanical ability on pilot performance occurred because verbal ability explained variability in mechanical ability; that is, the test of mechanical ability required verbal skills to read the test directions. taken from MacKinnon"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#a-shorthand-notation",
+    "href": "slides/day1/lin_reg_short.html#a-shorthand-notation",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "A shorthand notation",
+    "text": "A shorthand notation\n\\(y_i = 1*\\beta_0 + x_{i,1}*\\beta_1 + x_{i,2}*\\beta_2 + ... + x_{i,n}*\\beta_n + e_i\\)\nis nothing else than matrix multiplication\n\\(y = X\\beta+e\\)\n\\(X = designmatrix\\) with size \\([n_{datapoints},n_{predictors}]\\)\n\\(e = residuals\\)with size \\([n_{datapoints}]\\)\n\nwe will need this later. If you look up matrix multiplication the equivalency should get very obious"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#designmatrix-algebra",
+    "href": "slides/day1/lin_reg_short.html#designmatrix-algebra",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Designmatrix & algebra",
+    "text": "Designmatrix & algebra\n\n\n100×4 Matrix{Float64}:\n 1.0   1.0  0.0  0.0\n 1.0   2.0  1.0  0.693147\n 1.0   1.0  0.0  0.0\n 1.0   2.0  1.0  0.693147\n 1.0   1.0  0.0  0.0\n 1.0   2.0  1.0  0.693147\n 1.0   1.0  0.0  0.0\n 1.0   2.0  1.0  0.693147\n 1.0   1.0  0.0  0.0\n 1.0   2.0  1.0  0.693147\n ⋮               \n 1.0  20.0  1.0  2.99573\n 1.0  10.0  0.0  2.30259\n 1.0  20.0  1.0  2.99573\n 1.0  10.0  0.0  2.30259\n 1.0  20.0  1.0  2.99573\n 1.0  10.0  0.0  2.30259\n 1.0  20.0  1.0  2.99573\n 1.0  10.0  0.0  2.30259\n 1.0  20.0  1.0  2.99573\n\n\n\\[ y = X\\beta\\] Can be solved by: \\[ \\beta = (X^TX)^{-1}X^Ty\\]\n\nThe designmatrix seems to be not very helpful at the moment - after all its just a list of predictor values. But it will get interesting soon because we can code in categorical variables as well. It can be quite helpful in understanding what a model is doing (especially once you reach non-linear models)to look at the designmatrix.\nHere we only use the designmatrix to show you how the betas are estimated. Later we use \\((X^TX)^{-1}\\) to calculate SE of the estimates."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#dummy-coding",
+    "href": "slides/day1/lin_reg_short.html#dummy-coding",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Dummy Coding",
+    "text": "Dummy Coding\n\n\n\n\n\nWe code the categorical variable with 0 / 1\n\\(y_i = \\beta_0 + is\\_square *\\beta_1 + e_i\\)\n\nButton shape is a categorical variable with two levels. We can code it with 0 (round) and 1 (square). The important bit to understand here is that this is a trick. In the case of such categorical variables, we will never interpolate to other values. That is, the predictor is only defined at “0” and “1”. A line per se is just a helpful reminder, that this is still regression. Why use this trick at all? Because later we want to seemingly integrate categorical and continuous predictors!"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#interpretation",
+    "href": "slides/day1/lin_reg_short.html#interpretation",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Interpretation",
+    "text": "Interpretation\n\\(y_i = \\beta_0 + is\\_square *\\beta_1 + e_i\\)\n\n\\(\\beta_0\\) / Intercept: reactiontime when \\(is\\_square\\) equals 0 (round)\n\\(\\beta_1\\) / Slope: additional reactiontime when switching from round to square\n\n\nfit_shape_factor = lm(@formula(reactiontime ~ 1 + is_square), data_factor)\ncoeftable(fit_shape_factor)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n202.222\n10.8191\n18.69\n&lt;1e-33\n180.752\n223.692\n\n\nis_square\n14.9708\n15.3006\n0.98\n0.3303\n-15.3927\n45.3342"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#effect-coding-aka-sum-coding-aka-deviation-coding",
+    "href": "slides/day1/lin_reg_short.html#effect-coding-aka-sum-coding-aka-deviation-coding",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Effect Coding aka sum coding aka deviation coding",
+    "text": "Effect Coding aka sum coding aka deviation coding\n\n\n\n\n\nUsing effect coding, the interpretation of the intercept changes to the mean between groups\nwarning: often effect coding is made using -1 and 1, then the \\(\\beta_1\\) is halve the size! using 0.5 is much more practical \n\nNote that effect coding does not change the slope estimate, only the intercept. Also note that the intercept does not reflect mean(y). It reflects the means of the group means. This can be different if groups have different sizes. see this description on my blog on coding schemes. For some further information see here\nIt is not clear when to use which, it is more a personal matter (see blog for more discussion)"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#multiple-levels",
+    "href": "slides/day1/lin_reg_short.html#multiple-levels",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Multiple levels",
+    "text": "Multiple levels\n\n\n\n\n9×3 Matrix{Float64}:\n 1.0  0.0  0.0\n 1.0  0.0  0.0\n 1.0  0.0  0.0\n 1.0  1.0  0.0\n 1.0  1.0  0.0\n 1.0  1.0  0.0\n 1.0  0.0  1.0\n 1.0  0.0  1.0\n 1.0  0.0  1.0\n\n\nTreatment / Dummy Coding\n\n\n\n9×3 Matrix{Float64}:\n 1.0  -0.5  -0.5\n 1.0  -0.5  -0.5\n 1.0  -0.5  -0.5\n 1.0   0.5   0.0\n 1.0   0.5   0.0\n 1.0   0.5   0.0\n 1.0   0.0   0.5\n 1.0   0.0   0.5\n 1.0   0.0   0.5\n\n\nEffect Coding\n\n\nDummy coding and effect coding are the most popular coding scheme. I want to note here, that you can use any arbitrary linear combination of the columns. You SHOULD choose the coding scheme that matches your hypothesis. If you have a certain hypothesis, that MIDDLE + HIGH should be the same, why not code it that way? e.g. intercept + MIDDLE&HIGH + HIGH (to see why this is a linear combination, take MIDDLE&HIGH - HIGH and you get MIDDLE again). Now you can directly test what you are interested in. YOu could also use the normal coding and then run a contrast. But this gets us too far"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#section-1",
+    "href": "slides/day1/lin_reg_short.html#section-1",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "",
+    "text": "errorbars/data-points ommited for clarity \n\nAn example for a 2x2 design:\nWe want to measure test-scores (Points in an exam, Reactiontimes…). We experimentally manipulate either the difficulty of the task (factorA, “normal” vs. “easy”) or the temperature of the room (factorB, “normal, 20°” or “cool, 15°”. We expect an outcome like in the lower right pannel. Both easy test and cool temperature should make you achieve higher scores (cool temperature because you keep a cool head ;-)). If only one of the two shows an effect we will be in the other two quadrants. If no intervention shows an effect we will be in the top left quadrant.\nWe term these main effects. What if the size of main effect A depends on main Effect B? Then we go to interactions (next slide please)"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#interaction-effects",
+    "href": "slides/day1/lin_reg_short.html#interaction-effects",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Interaction effects",
+    "text": "Interaction effects\n\ninteraction effects not really helpful to learn these names \n\nThe columns show: Different ways interactions can look like. In the first column, the Factor A and B on average show an increase. In the second column, clearly something is going on, but the average effect of factorA/B is close to 0. The third is the mix between the first two.\nThe two rows show:sometimes its helpful for your understanding to look at these interactions with different “bases”, i.e. put factor A or factor B on the x-axis."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#how-are-interactions-coded",
+    "href": "slides/day1/lin_reg_short.html#how-are-interactions-coded",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "How are interactions coded",
+    "text": "How are interactions coded\n\\(y = \\beta_0 + factorA * \\beta_1 + factorB * \\beta_2 + factorA * factorB * \\beta_3\\)\nDifferent words for the same thing:\n\nThe interaction shows how much the prediction needs to be changed, when both factors co-occur\nThe interaction is the multiplication of the columns in X of factorA and factorB\nThe interaction represents the difference of differences\n\n\nDifference of differences: main effect (=\\(\\beta_1\\) or \\(\\beta_2\\)) are differences, the interaction represents the effect of having both differences against not having them. The difference of differences.\nIn the model they are coded as multiplications of the main effects (this holds true for dummy and effect coding!). In dummy coding it might be the most intuitive. We have a column with only 1’s (intercept) 1 1 1 1, we have one colum for factor A e.g. 1 1 0 0, and a third one for factorB 1 0 1 0. The interaction is the effect that happens if both factorA and factorB are 1, that is only in the first row (thus the interaction is 1 0 0 0). Appreciate that this is exactly the multiplication 1 1 0 0*1 0 1 0."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#interactions-of-continuouscategorical-predictors",
+    "href": "slides/day1/lin_reg_short.html#interactions-of-continuouscategorical-predictors",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Interactions of continuous/categorical predictors",
+    "text": "Interactions of continuous/categorical predictors\n\\(y = \\beta_0 + factorA * \\beta_1 + contB * \\beta_2 + factorA * contB * \\beta_3\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n-37.7034\n41.5057\n-0.91\n0.3714\n-122.724\n47.3172\n\n\nwt\n54.774\n10.9877\n4.99\n&lt;1e-04\n32.2666\n77.2813\n\n\nam: 1\n27.2841\n78.5006\n0.35\n0.7308\n-133.517\n188.085\n\n\nwt & am: 1\n-11.3233\n32.382\n-0.35\n0.7292\n-77.6548\n55.0083\n\n\n\n\n\n\nIf you look at the coefficient table, we now have an interaction between the slope and a categorial variable. What the coefficients mean, depends completly on the coding scheme used. Here we used dummy coding. That means, the slope for wt(weight) is 47.14 \\(\\frac {hp}{ton}\\). That is an increase of 1 ton results in ~50 more horsepower. But this is only true, if the factor àm` (automatic) is false! Because if it is true, then the dummy-coded column has 1’s in there and the interaction kicks in. Then we have 47.14 + 63.84 \\(\\frac {hp}{ton}\\). This fact, that automatic cars have a steeper increase of horsepower per weight you can check in the plot.\nNote that if you want to make the strong assumption, that there is no interaction, you can leave it out of the model. If in the true population (which you sampled) there is actually no interaction (and what we see here just happened because we had a weird/lucky sample), you will have higher power - that is you will find the true effect structure more often. But if there is actually an interaction and you did not model it, you might get big problems and conclude wrong things. Plotting & calculating at the same time might help save the day! (but beware of overfitting/HARKing!)"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#the-difference-between-main-and-simple-effects",
+    "href": "slides/day1/lin_reg_short.html#the-difference-between-main-and-simple-effects",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "The difference between main and simple effects",
+    "text": "The difference between main and simple effects\n\nDummy coding tests simple effects\nEffect coding main effects\n\nSimple effects are the difference between e.g. condition A == Yes and condition A == No at a specific level of the other effects (e.g. Condition B == No, the difference between the two red pointclouds).\nMain effects are the differences between conditions on the average of the other conditions. E.g. the main effect A, is the difference between condition A == yes and condition A == no, at the group-mean of the other two conditions. Why stress group mean? Because if one cell/point-cloud would have more data points than another, the mean would be shifted towards the cloud with more datapoints. For more details and explanation see this blog post"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#effect-coding-to-the-help",
+    "href": "slides/day1/lin_reg_short.html#effect-coding-to-the-help",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Effect coding to the help!",
+    "text": "Effect coding to the help!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n-24.0614\n39.2503\n-0.61\n0.5448\n-104.462\n56.3392\n\n\nwt\n49.1124\n16.191\n3.03\n0.0052\n15.9466\n82.2781\n\n\nam_eff\n27.2841\n78.5006\n0.35\n0.7308\n-133.517\n188.085\n\n\nwt & am_eff\n-11.3233\n32.382\n-0.35\n0.7292\n-77.6548\n55.0083\n\n\n\n\n\n\nThe top one is with dummy coding, the bottom one with effects coding. Note how the coefficients and the significance of the coefficients changed. The slope of wt now represents the average slope, not the slope at a reference category as before.\nBut we are only half way there, we also need to center the continuous variable (next slide please)"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#centering-continuous-predictors",
+    "href": "slides/day1/lin_reg_short.html#centering-continuous-predictors",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Centering continuous predictors",
+    "text": "Centering continuous predictors\n\\(weight_{new} = weight - mean(weight)\\)\n\\(y = \\beta_0 + weight_{new}*\\beta_1 + am*\\beta_2 + weight_{new}*am*\\beta_3\\)\nWhat does \\(\\beta_1\\) and \\(\\beta_0\\) represent now?\n\n\\(\\beta_1\\) still represents the influence of a change in weight by 1 on the \\(y\\). The interpretation for \\(\\beta_0\\) is the same, it is the value y takes, when all other predictors are zero. I.e. in this case now the intercept represents the value of \\(y\\) when the weight is at its mean value. That is, with subtracting certain values from predictors, you can shift around where the 0-point is, and consequently where the intercept is.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n137.416\n10.8256\n12.69\n&lt;1e-12\n115.241\n159.591\n\n\nwt_new\n54.774\n10.9877\n4.99\n&lt;1e-04\n32.2666\n77.2813\n\n\nam: 1\n-8.91783\n36.7881\n-0.24\n0.8102\n-84.2749\n66.4393\n\n\nwt_new & am: 1\n-11.3233\n32.382\n-0.35\n0.7292\n-77.6548\n55.0083"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#interaction-between-two-continuous-variables",
+    "href": "slides/day1/lin_reg_short.html#interaction-between-two-continuous-variables",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Interaction between two continuous variables",
+    "text": "Interaction between two continuous variables\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n37.9417\n18.3445\n2.07\n0.0399\n1.76367\n74.1197\n\n\nmath\n0.166024\n0.329817\n0.50\n0.6153\n-0.484421\n0.816469\n\n\nsocst\n0.183338\n0.363943\n0.50\n0.6150\n-0.53441\n0.901085\n\n\nmath & socst\n0.0976088\n0.00656571\n14.87\n&lt;1e-33\n0.0846603\n0.110557\n\n\n\n\n\n\n\n\n\n\n\nContinuous/continous interactions are build exactly the same way: \\(y ~ \\beta_0 + x_1\\beta_1 + x_2\\beta_2 + x_1x_2\\beta_3\\) Simple multiplikation of theprevious two terms. Note that the estimated predictor can be tricky to understand.\nIn this example we are predicting reading skills based on math skills. The continuous interaction is a measure of social status."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#interaction-as-a-plane",
+    "href": "slides/day1/lin_reg_short.html#interaction-as-a-plane",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Interaction as a plane",
+    "text": "Interaction as a plane\n\ninteraction 2d\nInteraction between two continuous variables can be seen as twistings of the plane. In the top right corner we see an example without any interaction. Note how the plain is straight. If we add interactions, the slope of one factor depends on the other factor."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#section-3",
+    "href": "slides/day1/lin_reg_short.html#section-3",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "",
+    "text": "Remember: There is only one statistical test\n We need to specify our H0\nGeneral assumption for all of the following inference: Independence of residuals\n\nThe residuals have to be independent from each other. That is, after modeling all effects, the noise/residuals/whats leftover hast to be independent. If they are not, then they were not identically sampled from the population distribution and our conclusions might be completly wrong (usually its still kind of right)"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#two-general-ways",
+    "href": "slides/day1/lin_reg_short.html#two-general-ways",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Two general ways",
+    "text": "Two general ways\nsampling distribution of predictors (walds t-test)\n\nwalds-t = \\(\\frac{estimate}{SE}\\)\ntests a single predictor\ncoding scheme influences what is tested (good and bad)\n\n\nModel comparison / F-test\n\nTest how well a model with predictor vs. one without explain the data\nCan test sets of predictors at the same time\n\n Generally the two tests will agree in the case of a single predictor to be tested (\\((waldsT)^2 = F\\)).\nThis will be not true when we reach GLMs and in multiple regression only for high \\(n\\)"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#variance-explained-f-test",
+    "href": "slides/day1/lin_reg_short.html#variance-explained-f-test",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Variance Explained / F-Test",
+    "text": "Variance Explained / F-Test\n\\(R^2 = 1-\\frac{var(residual_{full})}{var(residual_{reduced})}\\)\nIn order to get the variance explained of the full/reduced model we need to fit the model twice, once with the effect and once without. Conceptually, the test boils down to:\n\nvar1 = var(residuals(lm(@formula(hp ~ 1 + wt), d)))\nvar0 = var(residuals(lm(@formula(hp ~ 1), d)))\nr2 = 1 - var1/var0\n\n0.6395024519553965"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#empirical-distribution",
+    "href": "slides/day1/lin_reg_short.html#empirical-distribution",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Empirical distribution:",
+    "text": "Empirical distribution:"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#analytic-solution",
+    "href": "slides/day1/lin_reg_short.html#analytic-solution",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Analytic solution",
+    "text": "Analytic solution\n\n\n\n\n\nAn analytical form is available here as well."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#usually-f-distribution-is-used",
+    "href": "slides/day1/lin_reg_short.html#usually-f-distribution-is-used",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Usually F-distribution is used",
+    "text": "Usually F-distribution is used\n\\[ F = \\frac{\\frac{R^2_{m+k}-R^2_{m}}{df_1}}{\\frac{1-R^2_{m+k}}{df_2}}  = \\frac{R^2_{m+k}-R^2_{m}}{1-R^2_{m+k}} * \\frac{df_2}{df_1}\\] with bookkeeping (for 1xk ANOVA):\n\\(df_1 = k\\), with \\(k\\) the number of predictors\n\\(df_2 = n - m - k -1\\), with \\(n\\) the number of observations, \\(m\\) the number of total predictors\n\n\n\n\n\n\nRemember that we use analytic distributions to save use the simulation cost (and people did not have computers back then)\nThe F-value is the ratio of the additional variance explained by including the predictor \\(R^2_{m+k} - R^2{m}\\) divided by the residual variance, what remains after the full model explained all data (\\(1 -R^2_{m+k}\\)). In other words, its a ratio of how much you gain divided by how much you still did not explain.\nThe deegrees of freedom are bookkeeping, i.e. you need to adapt your \\(R^2\\) for how many variables you used etc.\nI put these plots here, so you can appreciate the shape of the F-distribution. In the left plot, we fixed the number of observation to 30+df1 and vary df2 (approx ~ the number of parameters we exclude at the same time from the model). In the right plot we fix df1 to 3 and vary df (approx ~ number of observations).\nWhat you should see is, that the F-value for a nullmodel (the distributions you see, which is related to the ratio of variances) gets larger if you increase the number of parameters (left plot) or if you increase the number of datapoints (right)."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#overfit",
+    "href": "slides/day1/lin_reg_short.html#overfit",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Overfit",
+    "text": "Overfit\n\noverfit animationvar-explained(predictorA) \\(&lt;=\\) Var-explained(predictorA + predictorB)\nExplained-variance is not everything. We also have to take into account the “number” of predictors (or better, the flexibility, or degree of freedoms) we include\n\nIf you add any predictor to your model, the variance explained will always increase. This is one of the many problems with \\(R^2\\). We could use \\(adjusted R^2\\) which will reduce the \\(R^2\\) depending on the number of parameters used. This is also a way to think why we have the degree of freedoms in the F-distribution: The more parameters we remove at the same time, the more variance we will explain just by chance =&gt; the higher the F value under the \\(H_0\\) is."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#categorical-predictor-with-multiple-levels",
+    "href": "slides/day1/lin_reg_short.html#categorical-predictor-with-multiple-levels",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Categorical predictor with multiple levels",
+    "text": "Categorical predictor with multiple levels\nAirbnb prices against location in Berlin (first 900 entries)\n\n\n\n\n\n\nWe see many different samples. We wonder - do they all come from the same distribution and the observed differences in mean between the actegories are we just sampling error?"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#testing",
+    "href": "slides/day1/lin_reg_short.html#testing",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Testing",
+    "text": "Testing\n\n\n\nfit_ngb = lm(@formula(price ~ 1 + ngb), d_sub)\ncoeftable(fit_ngb)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n146.821\n7.48372\n19.62\n&lt;1e-70\n132.133\n161.509\n\n\nngb: Friedrichshain\n8.19951\n10.6449\n0.77\n0.4413\n-12.6929\n29.0919\n\n\nngb: Hellersdorf\n46.1265\n10.9175\n4.22\n&lt;1e-04\n24.6991\n67.5539\n\n\nngb: Hohenschönhausen\n9.10781\n10.9175\n0.83\n0.4044\n-12.3196\n30.5352\n\n\nngb: Kreuzberg\n-21.2281\n10.0817\n-2.11\n0.0355\n-41.0151\n-1.44118\n\n\nngb: Lichtenberg\n106.806\n8.92754\n11.96\n&lt;1e-29\n89.2839\n124.327\n\n\nngb: Marzahn\n0.557313\n10.9175\n0.05\n0.9593\n-20.8701\n21.9847\n\n\nngb: Mitte\n-4.86271\n10.4679\n-0.46\n0.6424\n-25.4077\n15.6822\n\n\nngb: Neukölln\n33.352\n10.3607\n3.22\n0.0013\n13.0174\n53.6866\n\n\nngb: Pankow\n-29.2994\n10.9175\n-2.68\n0.0074\n-50.7268\n-7.87195\n\n\nngb: Prenzlauer Berg\n40.0487\n10.8449\n3.69\n0.0002\n18.7637\n61.3336\n\n\nngb: Reinickendorf\n42.2467\n10.2612\n4.12\n&lt;1e-04\n22.1075\n62.3859\n\n\nngb: Schöneberg\n-38.9272\n10.6449\n-3.66\n0.0003\n-59.8196\n-18.0348\n\n\nngb: Spandau\n-33.3677\n10.8449\n-3.08\n0.0022\n-54.6527\n-12.0828\n\n\nngb: Steglitz\n-46.3484\n9.81855\n-4.72\n&lt;1e-05\n-65.6189\n-27.0779\n\n\nngb: Tempelhof\n-62.6469\n11.4316\n-5.48\n&lt;1e-07\n-85.0832\n-40.2106\n\n\nngb: Treptow\n38.8887\n10.7754\n3.61\n0.0003\n17.7402\n60.0373\n\n\nngb: Wedding\n-48.4814\n10.1684\n-4.77\n&lt;1e-05\n-68.4385\n-28.5243\n\n\nngb: Weißensee\n-30.6431\n10.5246\n-2.91\n0.0037\n-51.2994\n-9.98689\n\n\n\n\n\n\n\n\n\nxkcd comic significance jelly beans\n\n\n\n\nPlease never just pick the parameter that was significant and report only that one. This will be highly missleading.\nThere are ways to do this more or less correctly i.e. multiple comparison correction or hierarchical models over the effects (usually in a bayesian sense). We will not dive into these in this course."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#testing-1",
+    "href": "slides/day1/lin_reg_short.html#testing-1",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Testing",
+    "text": "Testing\n#| echo: true\nm0 = lm(@formula(price ~ 1), d_sub)\nm1 = lm(@formula(price ~ 1 + ngb), d_sub)\nr²0 = r2(m0)\nr²1 = r2(m1)\nn = nrow(d_sub)\np1 = length(coef(m1)) - 1\np0 = length(coef(m0)) - 1\nf_stat = ((r²1 - r²0) / (p1 - p0)) / ((1 - r²1) / (n - p1 - 1))\np_val = 1 - cdf(FDist(p1 - p0, n - p1 - 1), f_stat)\n\"F-statistic: $(round(f_stat, digits=2)), p-value: $(round(p_val, digits=4))\"\n\nHere we show that individual levels of factors can be significant, but the bulk (the whole factor) tested via model comparison could indicate that there is no difference (or a weaker one). Most often these tests show you the same results. If they differ it will be usually because you do not have enough certainty (i.e. not enough data or too much noise). In such cases be very careful with your interpretations (what that means is: don’t think this is now a true fact because p&lt;0.05. It is likely not. Discuss that even you show significance, you have limited applicability. Always think that this is a single sample, other samples could show same effect or could indicate that you were lucky (unlucky?) this time."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#an-graphical-way-to-think-about-it",
+    "href": "slides/day1/lin_reg_short.html#an-graphical-way-to-think-about-it",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "an graphical way to think about it",
+    "text": "an graphical way to think about it"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#coming-back-to-a-2x2-design.-which-order-to-test-effects",
+    "href": "slides/day1/lin_reg_short.html#coming-back-to-a-2x2-design.-which-order-to-test-effects",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Coming back to a 2x2 design. Which order to test effects?",
+    "text": "Coming back to a 2x2 design. Which order to test effects?\n\nvenn diagram\nThe first diagram shows how much variance each effect can explain. As you can see, there is some overlap (that is e.g. predictor A and B explain some identical variance). The graph needs to be seen chronological, you start in the first row. For Type I you explain everything there is to be explained by A. Then you add B and explain whatever is left, then you add the interaction. For type II, you remove all higher interactions containing this factor (here only A:B, but could be A:C or A:B:C as well). Then you compare a model with your factor (1 + A + B) , against a model without the factor (1 + B). Type III is very similar, but in addition you include the interaction, thus everything explained by A:B is also removed.\nIt’s quite safe to say that you should not use type I. There is a large controversy over choosing type II or III. I hope your data analytical choises do not influence your results, but if they do - state it! In any case report which type you use."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#model-comparison-does-not-care-about-recoding",
+    "href": "slides/day1/lin_reg_short.html#model-comparison-does-not-care-about-recoding",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Model comparison does not care about recoding",
+    "text": "Model comparison does not care about recoding\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n-37.7034\n41.5057\n-0.91\n0.3714\n-122.724\n47.3172\n\n\nwt\n54.774\n10.9877\n4.99\n&lt;1e-04\n32.2666\n77.2813\n\n\nam: 1\n27.2841\n78.5006\n0.35\n0.7308\n-133.517\n188.085\n\n\nwt & am: 1\n-11.3233\n32.382\n-0.35\n0.7292\n-77.6548\n55.0083\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCoef.\nStd. Error\nt\nPr(&gt;|t|)\nLower 95%\nUpper 95%\n\n\n\n\n(Intercept)\n-24.0614\n39.2503\n-0.61\n0.5448\n-104.462\n56.3392\n\n\nwt\n49.1124\n16.191\n3.03\n0.0052\n15.9466\n82.2781\n\n\nam_eff\n27.2841\n78.5006\n0.35\n0.7308\n-133.517\n188.085\n\n\nwt & am_eff\n-11.3233\n32.382\n-0.35\n0.7292\n-77.6548\n55.0083\n\n\n\n\n\nWalds-T test cares (simple vs. main effects)\n\nr²_dummy = GLM.r2(m_dummy)\nr²_effect = GLM.r2(m_effect)\n\"R² dummy coding: $(round(r²_dummy, digits=4)), R² effect coding: $(round(r²_effect, digits=4))\"\n\n\"R² dummy coding: 0.6411, R² effect coding: 0.6411\"\n\n\nmodel comparison does not care!\n\nHere we show how changing the coding-scheme can influence the significance of your predictors if we use walds-test (see previous slides). This is not the case if we make use of model comparisons (using F-Test or as seen on Day-3 the very related likelihood ratio test."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#section-4",
+    "href": "slides/day1/lin_reg_short.html#section-4",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "",
+    "text": "Linearity of responses\nIndependence\nNormality\nEqual variance"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#linearity-of-responses",
+    "href": "slides/day1/lin_reg_short.html#linearity-of-responses",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Linearity of responses",
+    "text": "Linearity of responses"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#linear-response",
+    "href": "slides/day1/lin_reg_short.html#linear-response",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Linear response",
+    "text": "Linear response\n\nhomoscedasticity\nYou are trying to model linear relationships. Thus if the relationships are not linear, you need to do something! One thing would be to transform your explanatory variables (i.e. in this example on the left you could include a quadratic version of the predictor). The other is to use non-linear Linear models. Those are referred to as GAMs or spline regression.\ntaken from here"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#independence-of-residuals",
+    "href": "slides/day1/lin_reg_short.html#independence-of-residuals",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Independence of residuals",
+    "text": "Independence of residuals\n\n\n\n\n\n\nAnother example of dependent variables are measurements from the same subject. If intuition serves you well, it should be clear that often data (e.g. reaction times) from one subject are more similar than data from another subject. If we do not model this similarity/dependency correctly we will make mistakes. In our case, we would think that we have \\(n=100\\) data points and thus 100 degree of freedom / bits of information that are independent. But actually in our example we have way less. This can be seen by resorting the data by a hidden factor.\nWhile random sampling is important for causal declarations, it also helps us to ensure independence.\nWe will hear a lot more on this on the fourth day."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#normality-of-residuals",
+    "href": "slides/day1/lin_reg_short.html#normality-of-residuals",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Normality of residuals",
+    "text": "Normality of residuals"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#checking-assumptions-normality-using-qqplots",
+    "href": "slides/day1/lin_reg_short.html#checking-assumptions-normality-using-qqplots",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Checking Assumptions: Normality using QQplots",
+    "text": "Checking Assumptions: Normality using QQplots\n\n\n\n\n\nSource: Sean Kross\n\nThere are explicit tests for normality, e.g. Lillifors or even better the Shapiro-Wilk- Test. They are problematic because they always test the H_0 that the data are normal distributed. as we already know, a test assuming H_0 cannot be used to test H_0. A different concern is, that these tests always use one specific feature to test for normality. It is quite likely that one test will give you a pass, another a fail. A common argument is, that once 30+ subjects are measured, on can invole the central limit theorem and assume that the population over subjects follows a normal distribution (because they are based on a mix of many distributions). This is a somewhat dubious argument in my interpretation. If you have large effects, these assumptions do not matter much. If data is limited, they matter a lot! I recommend reporting different kinds of robustness analysis which circumenvent some of the assumptions (e.g. test log(data), non-parametric test etc.). In the end a statistical decision (whether you believe the effect or not) will stay subjective regardless. Also bootstrapping might help a lot!"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#a-nice-trick",
+    "href": "slides/day1/lin_reg_short.html#a-nice-trick",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "A nice trick",
+    "text": "A nice trick\nimulate datasets with same specifications and compare\n\n\n\n\n\n\nI simulate here 24 sets out of a normal distribution. One of these (number 25) is the original dataset I want to test. In this case I would probably conclude that there is some unexpected skew"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#equal-variance",
+    "href": "slides/day1/lin_reg_short.html#equal-variance",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Equal variance",
+    "text": "Equal variance\n\n\n\nhomoscedasticity\n\n\n\n\n\nhomoscedasticity categorical\n\n\n\nYou assume a single \\(\\sigma\\) for your residuals. If you have non-constant variance, you violate this assumption. There are explicit ways to model differing variance, but they are non-standard. Sometimes its possible to transform your dependent variable, so that the difference in variance is smaller. Weighted Sum of Squares could also be a solution.\ntaken from here"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#fisher",
+    "href": "slides/day1/lin_reg_short.html#fisher",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Fisher",
+    "text": "Fisher\n\np-values are a continuous measure of evidence against the \\(H_0\\)\n“Significant” p-values can be defined ad-hoc, i.e. what you think is enough evidence for this one test\na sensitivity analysis (~power analysis) can be performed but is not necessary\nGeneral idea: A single experiment should inform your decisions\n\nfor all intents and purposes, p=.049 and p=.051 constitute an identical amount of evidence against the null hypothesis source"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#neyman-pearson",
+    "href": "slides/day1/lin_reg_short.html#neyman-pearson",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Neyman-Pearson",
+    "text": "Neyman-Pearson\n\np-values are only used to be threshold by \\(\\alpha\\)\nthe pre-analysis fixed \\(\\alpha\\) denotes the error-probability to receive false positives\na power analysis is required and is part of the test\na p-value of 0.049 and 0.001 give the same evidence (with \\(\\alpha=0.05\\))\nGeneral idea: Its all about long-term properties. A single experiment does not really help\n\n\nNeyman really wanted to have a decision at the end of the test. Do I have significance or not - no grey area."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#type-i-vs.-type-ii-errors",
+    "href": "slides/day1/lin_reg_short.html#type-i-vs.-type-ii-errors",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Type I vs. Type II errors",
+    "text": "Type I vs. Type II errors\n\ntype1errorsimage source"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#type-errors",
+    "href": "slides/day1/lin_reg_short.html#type-errors",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Type Errors",
+    "text": "Type Errors\n\ntypeerrors\nAlpha is referring to the probability to commit a Type I error.\nThis probability is typically set to 0.05.\nNote: Setting the alpha to this value was more or less an arbitrary choice. However, it is a rather strict convention now."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#nhst",
+    "href": "slides/day1/lin_reg_short.html#nhst",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "NHST",
+    "text": "NHST\nA dark mix between Fisher & Neyman-Pearson is currently used. This is evident by calculating a p-value, p-values below \\(\\alpha\\) are significant (NP). But exact p-values are still reported.\nThis is a very popular mix - but is not consistent. Either you want to accept / reject a finding (and be correct on the long run) or you want to identify how much evidence you have from your sample (and act according to how much evidence you have)."
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#bayes",
+    "href": "slides/day1/lin_reg_short.html#bayes",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Bayes",
+    "text": "Bayes\n\nparameter estimates (combined with the apropriate aka fully informed prior) reflect the probability of the true parameter being this value\nP-Values are of no use - one can contrast two opposing hypotheses directly (e.g. model-selection)\nusually not interested in testing hypotheses, but more on estimating likely ranges of parameters"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#an-intuition-on-the-difference-between-bayes-frequentist",
+    "href": "slides/day1/lin_reg_short.html#an-intuition-on-the-difference-between-bayes-frequentist",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "An intuition on the difference between Bayes & Frequentist",
+    "text": "An intuition on the difference between Bayes & Frequentist\n\n\nFrequentist:\n\nAll about the sampling distribution\nprobabilities are frequencies of (hypothetical) outcomes\nHypothetical Population and experiments (=&gt; sampling distribution)\nA population-parameter has a true value\n“top down”\n\n\n\n\n\nBayesian:\n\nAll about the (subjective*) probabilities of parameters\nprobabilities are plausibilities/certainties\npopulation-parameters are uncertain\n“bottom up”\n\n\n\n  They can result in exactly the same numbers. But interpretation vastly different!\n\nsometimes called subjective because of subjective choice of priors"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#be-both-if-you-can",
+    "href": "slides/day1/lin_reg_short.html#be-both-if-you-can",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Be both if you can!",
+    "text": "Be both if you can!\nCome join our Seminar: “Statistical Rethinking Reading Club” next semester\n\n\n\n\nstatistical rethinking book\n\n\n\n\n\n“This is a rare and valuable book that combines readable explanations, computer code, and active learning.” —Andrew Gelman, Columbia University\n\n\n“…an impressive book that I do not hesitate recommending for prospective data analysts and applied statisticians!” —Christian Robert, Université Paris-Dauphine (review)\n\n\n“A pedagogical masterpiece…” —Rasmus Bååth, Lund University\n\n\n“The content of this book has been developed over a decade+ of McElreath’s teaching and mentoring of graduate students, post docs, and other colleagues, and it really shows.” —Brian Wood, Yale\n\n\n“…omg suddenly everything makes sense…” —Ecstatic anonymous reader"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#its-all-linear-models",
+    "href": "slides/day1/lin_reg_short.html#its-all-linear-models",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "It’s all linear models",
+    "text": "It’s all linear models"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#correlation",
+    "href": "slides/day1/lin_reg_short.html#correlation",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "Correlation",
+    "text": "Correlation\n\\[r = \\frac{cov_{XY}}{\\sigma_X\\sigma_Y}\\] \\[ Y = \\beta_0 + X\\beta_1\\] \\[ r = \\beta_1\\frac{\\sigma_X}{\\sigma_Y}\\]\nAlternative: standardize both Y & X (e.g. \\(Y^* = \\frac{Y}{\\sigma_Y}\\)) before fitting the regression, you will receive correlations"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#t-test",
+    "href": "slides/day1/lin_reg_short.html#t-test",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "t-test",
+    "text": "t-test\nTest for two groups: \\(t = \\frac{\\hat \\mu_1 - \\hat \\mu_2}{\\sqrt{SE_1^2 + SE_2^2}}\\)\n\n# Welch's t-test equivalent\n#y0 = d.reactiontime[d.round_square .== \"round\"]\n#y1 = d.reactiontime[d.round_square .== \"square\"]\n#t_stat = (mean(y0) - mean(y1)) / sqrt(var(y0)/length(y0) + var(y1)/length(y1))\n#df_t = (var(y0)/length(y0) + var(y1)/length(y1))^2 /\n#        ((var(y0)/length(y0))^2/(length(y0)-1) + (var(y1)/length(y1))^2/(length(y1)-1))\n#p_val_t = 2 * (1 - cdf(TDist(df_t), abs(t_stat)))\n#\"t-statistic: $round(t_stat, digits=2), p-value: $round(p_val_t, digits=4)\"#\n\n# Linear model equivalent\n#fit_t = lm(@formula(reactiontime ~ 1 + round_square), d)\n#coeftable(fit_t)\n\n\nThe lines of interest are the ones with “t = 4.79”. You can find the in both outputs, the t-test as well as the linear model with a single categorical variable - nice!"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#anova",
+    "href": "slides/day1/lin_reg_short.html#anova",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "ANOVA",
+    "text": "ANOVA\n\nd = mtcars\n\n# ANOVA via model comparison\nl1 = lm(@formula(hp ~ 1 + gear), d)\nl0 = lm(@formula(hp ~ 1), d)\nr²_l1 = GLM.r2(l1)\nr²_l0 = GLM.r2(l0)\nn_anova = nrow(d)\np_l1 = length(coef(l1)) - 1\np_l0 = length(coef(l0)) - 1\nf_anova = ((r²_l1 - r²_l0) / (p_l1 - p_l0)) / ((1 - r²_l1) / (n_anova - p_l1 - 1))\np_anova = 1 - cdf(FDist(p_l1 - p_l0, n_anova - p_l1 - 1), f_anova)\n\"F-statistic: $(round(f_anova, digits=2)), p-value: $(round(p_anova, digits=4))\"\n\n\"F-statistic: 16.02, p-value: 0.0004\"\n\n\n\nYou could also use the anovaon the linear model output to get the anova table"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#ancova",
+    "href": "slides/day1/lin_reg_short.html#ancova",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "ANCOVA",
+    "text": "ANCOVA\n\n# Bla Using the synthetic airbnb data\n#d_sub800 = view(dair, 1:800, :)\n\n#l1_ancova = lm(@formula(price ~ 1 + bedrooms + reviews), d_sub800)\n#l0_ancova = lm(@formula(price ~ 1 + bedrooms), d_sub800)\n#r²_1 = r2(l1_ancova)\n#r²_0 = r2(l0_ancova)\n#n_a = nrow(d_sub800)\n#p_1 = length(coef(l1_ancova)) - 1\n#p_0 = length(coef(l0_ancova)) - 1\n#f_ancova = ((r²_1 - r²_0) / (p_1 - p_0)) / ((1 - r²_1) / (n_a - p_1 - 1))\n#p_ancova = 1 - cdf(FDist(p_1 - p_0, n_a - p_1 - 1), f_ancova)\n#\"F-statistic: $round(f_ancova, digits=2), p-value: $round(p_ancova, digits=4)\""
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#recommendations",
+    "href": "slides/day1/lin_reg_short.html#recommendations",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "recommendations",
+    "text": "recommendations\nI like these books: - Statistical Rethinking - (more math) Advanced Data Analysis from an elemental point view (Cosma Shalizi)\nI like these webpages: https://www.flutterbys.com.au/stats/"
+  },
+  {
+    "objectID": "slides/day1/lin_reg_short.html#and-thats-it",
+    "href": "slides/day1/lin_reg_short.html#and-thats-it",
+    "title": "Applied Generalized Linear (Mixed) Modelling",
+    "section": "And thats it!",
+    "text": "And thats it!"
+  },
+  {
     "objectID": "material.html",
     "href": "material.html",
     "title": "Material",
@@ -89,5 +600,481 @@
     "title": "Installation guide",
     "section": "Step 5: Installing the required packages",
     "text": "Step 5: Installing the required packages\nWe are providing a “package installation” notebook. This will make sure that everyone will be using the same package versions. Please run this one before any of the other notebooks.\n\nCopy this link to the installation notebook:\n\nhttps://github.com/s-ccs/workshop_lmm_2026/blob/main/00_installation.jl\n\nPut it in the Pluto.jl box next to open a notebook.\nConfirm that you want to start this notebook!\nGrab a ☕ - it will take 10-15 minutes to install all packages.\nAnd then you are all done and ready for the workshop 🎉"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#repeated-measures",
+    "href": "slides/day2/mm_slides.html#repeated-measures",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Repeated measures",
+    "text": "Repeated measures\n\nIt looks like there is no difference between groups?\nBut what if we have data from within the same subjects?"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#repeated-measures-1",
+    "href": "slides/day2/mm_slides.html#repeated-measures-1",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Repeated measures",
+    "text": "Repeated measures\n\n\nEach subject is measured in multiple conditions. This allows us to remove individual offsets. Think of an extreme example. One subject has a score in one condition of 1000 and the other condition of 1001. A second subject a score of 10 and 11. The difference between conditions is 1 for both subjects. But if we would assume the data came from four separate subjects, we have to calculate the variance over [10 1000] and [1001 11]. Taking into account repeated measures can remove a lot of distracting effects/variances."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#removing-individual-differences",
+    "href": "slides/day2/mm_slides.html#removing-individual-differences",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Removing individual differences",
+    "text": "Removing individual differences\n\nBetween-Subject variability can be removed by repeated measures. This can result in higher power!\n\nThis plot shows the difference, e.g. condition2-condition1 for each subject. This difference values would commonly be tested with a t-test against an assumed \\(H_0=0\\). Note that a paired t-test does the same, first calculate the difference and then test this against 0."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#accounting-for-repeated-measures",
+    "href": "slides/day2/mm_slides.html#accounting-for-repeated-measures",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Accounting for repeated measures?",
+    "text": "Accounting for repeated measures?\n\n\\(n_S=5\\) subjects"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#sampling-distributions",
+    "href": "slides/day2/mm_slides.html#sampling-distributions",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Sampling distributions",
+    "text": "Sampling distributions\n\n\nThe sampling distribution represents the distribution of mean values we would get, if we would repeatedly sample new data (in this case samples with n = 5) from the population. Because we usually do not know the population sample mean, we have to estimate it from our current sample. In this example, we only have 5 data points, thus many population-means seem likely and the sampling distribution is broad."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#multiple-trials-per-subject",
+    "href": "slides/day2/mm_slides.html#multiple-trials-per-subject",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Multiple trials per subject",
+    "text": "Multiple trials per subject\n\nwith \\(n_T =15\\) trials\n\nBut what if I tell you that we actually have multiple trials per this black datapoints? Does the situation change?"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#sampling-distributions-1",
+    "href": "slides/day2/mm_slides.html#sampling-distributions-1",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Sampling distributions",
+    "text": "Sampling distributions\n\nThis sampling distribution reflects these exact 5 subjects. But does not generalize!\n\nThe sampling distribution is much smaller now, assumed we forgot that the data arose from the same subjects."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#sampling-distributions-2",
+    "href": "slides/day2/mm_slides.html#sampling-distributions-2",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Sampling distributions",
+    "text": "Sampling distributions\n\n(pink for aggregate, purple for disaggregate). There is a strong allure to choose the smaller one, easier to get significant results! \n\\[n_{subject}(aggregate) = df+1 = 5\\] \\[n_{subject}(pseudoreplication) = df+1= 15*5 = 75\\]\nNever analyze repeated measures data without taking repeated measures into account (Disaggregation, Pseudoreplication).\n\nThe \\(n_{subject}\\) are interesting because they directly relate to the sampling distribution (\\(SE =\\frac{\\sigma}{\\sqrt n}\\)) that is, the higher the estimated number of subjects (or related, degree of freedoms), the smaller the SE, the more “sure” we are.\nTaking the student t-test formula, it should become clear, that increasing N, will increase the t-value \\(t=\\frac{\\mu}{\\frac{\\sigma}{\\sqrt n}}\\)"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#always-necessary-to-aggregate",
+    "href": "slides/day2/mm_slides.html#always-necessary-to-aggregate",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Always necessary to aggregate?",
+    "text": "Always necessary to aggregate?\n\n\n\n\n\n\n\n\n\n\n\n\n\\[\\sigma_{within} &gt;&gt; \\sigma_{between}\\]\nSubjects are very similar\nNot so necessary to aggregate first\nA single parameter summarizes subject-means well\n\n\n\n\n\n\n\n\n\n\n\n\\[\\sigma_{within} &lt;&lt; \\sigma_{between}\\]\nSubjects are very different\nTotally necessary to aggregate first\n\\(n_{subject}\\) parameters summarizes subject-means well\n\n\n\n\nIf all subjects are equal, e.g. you record a dice-throw of each number, you can forget about which subject threw which dice. That is, the variance subjects generate is much smaller than the variance of the outcome.\nIf subjects are quite different, you have to include this in your analysis. Mixed models are one way to account for the dependency/clusteredness of some measurements (dependency, because knowing 90% of samples of a single subject will inform you on the last 10% of that subject, but not as much of the other subjects, stronger in the “subjects are different” case)"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#should-we-trust-all-subjects-equally",
+    "href": "slides/day2/mm_slides.html#should-we-trust-all-subjects-equally",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Should we trust all subjects equally?",
+    "text": "Should we trust all subjects equally?\n\nQuestion: Estimate the mean of the population\n\nSubjects with low number of samples should be less reliable. Again think of the sampling distribution. In this case the first subjects will show a broad sampling distribution and should not be weighted as much, the last subjects should show a small distribution and should be weighted more"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#should-we-trust-all-subjects-equally-1",
+    "href": "slides/day2/mm_slides.html#should-we-trust-all-subjects-equally-1",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Should we trust all subjects equally?",
+    "text": "Should we trust all subjects equally?\n\nWe should take into account sample-size into our estimate of the population mean\nWe should trust those subjects more, where we most sure about their central tendency"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#summary",
+    "href": "slides/day2/mm_slides.html#summary",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Summary",
+    "text": "Summary\n\nWhy repeated measures\n\nMore power to find effects that exist!\n\nDon’t forget about repeated measures!\n\nElse your type I error will be very high\n\nShould we trust all subjects equally?\n\nNo, we should punish for small within-subject sample-size and punish high variance\n\n\n\nAt this point it should be said, that this dependency is NOT special to subjects. Imagine you measure how well different classes of a school do. Now again, you have dependent measures because you can test in each class multiple times (because there are students in there). The first conclusion is that dependencies can arise from many different things. usually it is helpful to think hierarchical. The school example could be increase in both dimensions: Questions - Students - Class - School - District - Nation etc. We will soon learn how to incorporate all this knowledge in the model.\nA second point is, repeated measures allow us to remove variance which is great! But standard approaches do not work anymore and might make us TOO confident. Nevertheless if the experimental design allows it, always try to do repeated measures."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#the-example",
+    "href": "slides/day2/mm_slides.html#the-example",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "The example",
+    "text": "The example\n\n\n\nMinimizing 2    Time: 0:00:00 (95.75 ms/it)\n   objective: 1151.6265401473452\n\n\nMinimizing 131    Time: 0:00:00 ( 2.80 ms/it)\n\n\n\n\n\n\n\n\nEst.\nSE\nz\np\nσ_subject\n\n\n(Intercept)\n3.7173\n1.0037\n3.70\n0.0002\n3.0142\n\n\ncontrast\n0.1109\n0.0322\n3.45\n0.0006\n0.1300\n\n\nResidual\n6.6519\n\n\n\n\n\n\n\n\n\nExperiment: Contrast vs. Density Estimation \n=&gt; Online experiments with dropout: betweenjulia (minimum(n_j)) and julia (maximum(n_j)) trials"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#the-data",
+    "href": "slides/day2/mm_slides.html#the-data",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "The data",
+    "text": "The data\n\n\nEach subplot represents one baby. You can see that some babies have many trials, some only a few."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#one-model-for-all-subjects",
+    "href": "slides/day2/mm_slides.html#one-model-for-all-subjects",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "One model for all subjects",
+    "text": "One model for all subjects\n\n\\[\\hat{y} = \\beta_0 + \\beta_1 * contrast \\]\n\nIf we would fit only a single model to all data points (disregarding subject-dependencies), it would look like this. This would need the assumption, that all data is actually coming from the same process. In other words: there is no difference between babies."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#one-model-for-each-subject",
+    "href": "slides/day2/mm_slides.html#one-model-for-each-subject",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "One model for each subject",
+    "text": "One model for each subject\n\n\\[\\hat{y_j} = \\beta_{0,j} + \\beta_{1,j} * contrast \\]\n\nThe alternative extreme is to fit one model for each subject. An individual fit (each colored line). You can clearly see that subjects’ individual fits are very different from each other and can be very different from the average model fit (gray). Let’s look at the result of the subject in the lower right corner. It looks like that many different lines with many different slopes would fit the data equally well (or quite close). That is, there is a high uncertainty on the slope parameter. As discussed earlier, we should deemphasize this subject, that is, take into account our uncertainty. We will soon find a compromise between the two extremes, individual fits vs. complete pooled fit."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#excursion-two-stage-statistics",
+    "href": "slides/day2/mm_slides.html#excursion-two-stage-statistics",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Excursion: two-stage statistics",
+    "text": "Excursion: two-stage statistics\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis slide represents is a small excursion because it is very common in fMRI research and somewhat common in EEG.\nThe left plot shows all individual subject fits in one single plot.\nIt is statistically possible and accurate (but not as powerful as mixed models), to first summarize each subject (fit a model for each subject) and then test the model-parameters for systematic effects. The idea is, that if there is no effect of contrast (i.e. on the parameter slope), then the distribution of slope-parameters should be around zero (indicated by the black line in the right panel). If we find a deviation from 0 (right panel, blue dashed line) we can conclude that the subjects show a non-zero slope. Note that the first model (the individual fit) is usually referred to as the 1st level. The test of the parameters against 0 referred to as the 2nd-level (or group level)."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#one-solution",
+    "href": "slides/day2/mm_slides.html#one-solution",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "One solution",
+    "text": "One solution\n Linear Mixed Model aka Hierarchical Model aka Multilevel Model\nWe estimate the population distribution directly. Subject-means with high uncertainty due to different trial numbers are less influential for the model fit\n\nThe top distribution represents the (non-measurable) population. One can imagine, that each sampled subject represents one instance (random sample) of the population. If we have multiple trials per subject, than the game is repeated, each trial is one random sample of the subject distribution. We want to go in reverse direction, i.e. estimate from trial-wise measured data the subject means + variances and the population mean +variance"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#a-compromise",
+    "href": "slides/day2/mm_slides.html#a-compromise",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "A compromise",
+    "text": "A compromise\n\n\n\n\n\n\n\n\n\n\n\n\nSmall second level variance (limit \\(0\\))\nParameters/DF assumed to be n-trials\n\n\n\n\n\n\n\n\n\n\n\nLarge second level variance (limit \\(\\infty\\))\nParameters/DF assumed to be subjects\n\n\n\n\n\n\nshrinkageometer\n\n\n\nOne can imagine this as the dial (=&gt; a to-be-estimated parameter) of a tachometer. If the population variance is very small (or \\(0\\)), all subjects are the same. We can pool over subjects. If the estimated population variance is very high (\\(\\infty\\)) we have to treat each subject individual. Most of the time we will be in between. For experts: The degrees of freedom can therefore be uneven numbers!\nAn example for the left side would be, if you ask 50 subjects to flip a coin for 10times. You don’t expect subjects to differ here. The right side would be, if all subjects are different, for example if you would ask 50 subjects to tell you the distance to their favorite vacation destination, I doubt you can use the answer of one subject ot inform the answer of other subjects very much."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#formal-definition-of-the-linear-mixed-model",
+    "href": "slides/day2/mm_slides.html#formal-definition-of-the-linear-mixed-model",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Formal definition of the linear mixed model",
+    "text": "Formal definition of the linear mixed model\n\n\nComing back to the linear model, we assume that each parameter has a population distribution (Later we will relate two or more population distribution with each other). In order to later analyse the effects more easily, we use a specific definition: Split up the mean of the population in a “grand-average” mean + individual subject deviations. E.g. $ = (0+u{0,subject}) + (1+u{1,subject})contrast. Assume that the subject deviations are around 0 and normally distributed (central limit theorem anyone?). If we rearrange the terms we reach the formula on the slide."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#a-word-of-warning",
+    "href": "slides/day2/mm_slides.html#a-word-of-warning",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "A word of warning",
+    "text": "A word of warning\n\nEncouraging psycholinguists to use linear mixed-effects models ‘was like giving shotguns to toddlers’ (Barr)\n\n\n\nBecause mixed models are more complex and more flexible than the general linear model, the potential for confusion and errors is higher (Hamer)\n\nMany ongoing riddles:\nBook: Richly Parameterized Linear Models\n\nChp. 9: Puzzles from Analyzing Real Data sets\nChp.10: A Random Effect Competing with a Fixed Effect\nChp.12: Competition between Random Effects\nChp.14: Mysterious, Inconvenient or Wrong Results from Real Datasets\n\n\nMixed models can be complicated. I always try to draw the relation between parameters and explicitly write down the \\(y = \\beta_0 + \\beta_1*X ...\\) formula. The link to the book serves just as an example that there can be many strange things going on when doing hierarchical models."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#the-mixed-model-in-julia",
+    "href": "slides/day2/mm_slides.html#the-mixed-model-in-julia",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "The mixed model in Julia",
+    "text": "The mixed model in Julia\n\\(\\hat{y} = \\beta_0 + \\beta_1 * contrast + u_{0,j} + u_{1,j} * contrast\\)\n\\(\\hat{y}_j = \\beta X_j + b_jZ\\)\nFitting this in Julia using the package MixedModels.jl\n@formula(estim_error ~ 1 + contrast + (1 + contrast | subject))\nNote: In R::LME4 use || for uncorrelated random effects: estim_error ~ 1 + contrast + (1 + contrast || subject))\n\nEverything in brackets defines that it is nested in the grouping variable. For example (0+contrast|subject) means that contrast is nested in the grouping variable subject. But of course (0+contrast|school) or (0+contrast|image) could be groupings as well. Note that the 0+contrast is necessary and it will be later obvious why."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#mixed-models-in-julia",
+    "href": "slides/day2/mm_slides.html#mixed-models-in-julia",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Mixed models in Julia",
+    "text": "Mixed models in Julia\n\n\nLinear mixed model fit by maximum likelihood\n estim_error ~ 1 + contrast + (1 + contrast | subject)\n   logLik   -2 logLik     AIC       AICc        BIC    \n -1110.0822  2220.1644  2232.1644  2232.4286  2254.8674\n\nVariance components:\n            Column    Variance Std.Dev.   Corr.\nsubject  (Intercept)   9.085415 3.014202\n         contrast      0.016902 0.130008 -0.46\nResidual              44.248367 6.651945\n Number of obs: 325; levels of grouping factors: 20\n\n  Fixed-effects parameters:\n─────────────────────────────────────────────────\n                Coef.  Std. Error     z  Pr(&gt;|z|)\n─────────────────────────────────────────────────\n(Intercept)  3.71733    1.0037     3.70    0.0002\ncontrast     0.110879   0.0321549  3.45    0.0006\n─────────────────────────────────────────────────\n\n\n\nThis is the model summary output. The important bits are under “Random effects” and “Fixed effects”. Random effects describes the variance component, fixed effects the mean components. We are usually interested in the “fixed effect” estimates (more to the names later). I.e. it is not so interesting how much subjects vary in their mean-effects, but on how large the effect is on average\n(1 + contrast||subject) is equal to (1|subject) + (0+contrast|subject)"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#section",
+    "href": "slides/day2/mm_slides.html#section",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "",
+    "text": "gray: one model, color: individual model, black: mixed model\n\nIn our example, we see that the extreme results are not there anymore. For each subject a compromise was built between the average response and their individual ones."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#reml-vs-ml",
+    "href": "slides/day2/mm_slides.html#reml-vs-ml",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "REML VS ML",
+    "text": "REML VS ML\nIntuition:\nWhen estimating the variance parameter using maximum likelihood (ML) \\(\\sigma\\) is biased because \\(\\mu\\) is not known at the same time\nSolution:\nFit all fixed effects \\(\\mu\\), then refit the variance parameters on the residing estimates.\nThis is called restricted maximum likelihood (REML). If \\(n\\) is large, no difference between ML and REML exist. If \\(n\\) (i.e. \\(n_{subjects}\\)) is small REML gives better predictive results.\n If you do model comparison and fixed effects differ (usual case) you have to use ML. If ML-models were simplified using LRT, best practice to report the REML model at the end.\n\nFor further details see Zuur 2009 (“Mixed Effects Models and Extensions in Ecology with R”, page 116). In practice you do not need to worry too much about the difference. In MixedModels.jl, use method=:ml for ML and method=:reml (default) for REML."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#bootstrapping",
+    "href": "slides/day2/mm_slides.html#bootstrapping",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Bootstrapping",
+    "text": "Bootstrapping\n\nresample from the data with replacement (or parametrically from \\(H_0\\)-Model) \\(N\\) times\ncalculate statistic of interest\nobserve spread of statistic\n\n\n\nBootstrapping is a really nice tool. If I would not use Bayes, I would use bootstrapping. The downside is, that its computationally very expensive."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#model-comparisons-aka-p-values",
+    "href": "slides/day2/mm_slides.html#model-comparisons-aka-p-values",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Model-Comparisons aka p-values",
+    "text": "Model-Comparisons aka p-values\nUnresolved problem!\nRead (three links): - how to get p values - problems with stepwise regression, - different ways to get p-values\nOne way (good and common, but not the best*): Model comparison for fixed effects:\nBe sure to keep random structure equal\n\nmres0 = lmm(@formula(estim_error ~ 1 + (1+contrast | subject)), d)\nmres1 = lmm(@formula(estim_error ~ 1 + contrast + (1+contrast | subject)), d)\nlrtest(mres0,mres1)\n\nLikelihood-ratio test: 2 models fitted on 325 observations\n────────────────────────────────────────────────────────\n     DOF  ΔDOF      LogLik   Deviance   Chisq  p(&gt;Chisq)\n────────────────────────────────────────────────────────\n[1]    5        -1114.6313  2229.2626                   \n[2]    6     1  -1110.0822  2220.1644  9.0982     0.0026\n────────────────────────────────────────────────────────\n\n\n\nIn order to check whether a certain parameter/term leads to a better model fit, we can compare two models: One with that parameter (could be a fixed effect or random effect) and one without. The likelihood ratio test compares the log-likelihoods. We know from earlier lectures that the outcome of a likelihood ratio test punishes for more parameters, assuming assumptions are met, we can look up a probability that adding a parameter with no relation to the data will improve our model as much as the model got improved."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#wald-confidence-intervals",
+    "href": "slides/day2/mm_slides.html#wald-confidence-intervals",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Wald confidence intervals",
+    "text": "Wald confidence intervals\nSimpler approach: Wald-based confidence intervals\n\nmres1 |&gt; DisplayAs.Text\n\nLinear mixed model fit by maximum likelihood\n estim_error ~ 1 + contrast + (1 + contrast | subject)\n   logLik   -2 logLik     AIC       AICc        BIC    \n -1110.0822  2220.1644  2232.1644  2232.4286  2254.8674\n\nVariance components:\n            Column    Variance Std.Dev.   Corr.\nsubject  (Intercept)   9.085415 3.014202\n         contrast      0.016902 0.130008 -0.46\nResidual              44.248367 6.651945\n Number of obs: 325; levels of grouping factors: 20\n\n  Fixed-effects parameters:\n─────────────────────────────────────────────────\n                Coef.  Std. Error     z  Pr(&gt;|z|)\n─────────────────────────────────────────────────\n(Intercept)  3.71733    1.0037     3.70    0.0002\ncontrast     0.110879   0.0321549  3.45    0.0006\n─────────────────────────────────────────────────\n\n\n\nconfint(mres1)\n\nDictTable with 2 columns and 2 rows:\n coef          lower      upper\n ────────────┬────────────────────\n (Intercept) │ 1.75013    5.68454\n contrast    │ 0.0478563  0.173901\n\n\nWald confidence intervals are approximate but computationally efficient.\nFor small samples please consider other methods!\n\nMixedModels.jl provides profile likelihood confidence intervals which are more accurate than Wald-based intervals. The book from Phillip Good: “Permutation, Parametric and Bootstrap Tests of Hypotheses” might be a good start to learn more."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#degrees-of-freedom",
+    "href": "slides/day2/mm_slides.html#degrees-of-freedom",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Degrees of Freedom",
+    "text": "Degrees of Freedom\nWhy wald is approximate?\nSome packages (e.g. R::lme4) refuse to provide p-values, because the “degree of freedom” are not defineable.\nAre they \\(n_{subject}\\)? Is it \\(n_{total-trials}\\)? Somewhere in between?\nEach method to make a decision (e.g. Wald’s, Bootstrap, MCMC, Profiling, Permutation) makes some kind of assumption on this."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#kenward-roger-satterthwaite",
+    "href": "slides/day2/mm_slides.html#kenward-roger-satterthwaite",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Kenward Roger / Satterthwaite",
+    "text": "Kenward Roger / Satterthwaite\n\nusing MixedModelsSmallSample\nmres1_reml = lmm(@formula(estim_error ~ 1 + contrast + (1+contrast | subject)), d;REML=true)\nkr = small_sample_adjust(mres1_reml,KenwardRoger())\nsw = small_sample_adjust(mres1_reml,Satterthwaite())\n\ncoeftable(mres1_reml)\n\n\n\n\n\nCoef.\nStd. Error\nz\nPr(&gt;|z|)\n\n\n\n\n(Intercept)\n3.72909\n1.03682\n3.60\n0.0003\n\n\ncontrast\n0.110658\n0.0331202\n3.34\n0.0008\n\n\n\n\n\n\ncoeftable(kr)\n\n\n\n\n\nCoef.\nStd. Error\nDenDF\nt\nPr(&gt;|t|)\n\n\n\n\n(Intercept)\n3.72909\n1.04419\n15.508\n3.57\n0.0027\n\n\ncontrast\n0.110658\n0.0331925\n17.9404\n3.33\n0.0037\n\n\n\n\n\n\ncoeftable(sw)\n\n\n\n\n\nCoef.\nStd. Error\nDenDF\nt\nPr(&gt;|t|)\n\n\n\n\n(Intercept)\n3.72909\n1.03682\n15.508\n3.60\n0.0025\n\n\ncontrast\n0.110658\n0.0331202\n17.9404\n3.34\n0.0036"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#checking-assumptions-level-i",
+    "href": "slides/day2/mm_slides.html#checking-assumptions-level-i",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Checking assumptions level I",
+    "text": "Checking assumptions level I\n\n\n\n\n\n\nEst.\nSE\nz\np\nσ_subject\n\n\n(Intercept)\n3.7173\n1.0037\n3.70\n0.0002\n3.0142\n\n\ncontrast\n0.1109\n0.0322\n3.45\n0.0006\n0.1300\n\n\nResidual\n6.6519\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo strong non-linearity visible in residuals\n\n\n\n\n\n\n\n\n\n\n\nQQ plot indicates normality of residuals"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#checking-assumptions-level-ii",
+    "href": "slides/day2/mm_slides.html#checking-assumptions-level-ii",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Checking assumptions level II",
+    "text": "Checking assumptions level II\nIn addition: test whether normality for random-variable is true:\n\nQQ plot indicates normality of random effects, potentially some outliers on hte left side"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#shrinkage-1",
+    "href": "slides/day2/mm_slides.html#shrinkage-1",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Shrinkage",
+    "text": "Shrinkage\n\nThe individual estimates with high variance / far off the population are shrinked inwards\n\nShrinkage is also sometimes referred to as partial-pooling. Complete pooling would mean ignoring subject/group structure =&gt; all subjects are the same, no pooling would mean each subjects is fitted individually.\nA very useful thing of shrinkage gets obvious, when we think outside of the context of experiments. Imagine you try to estimate the deadliness of a certain cancer for all districts of Germany. Because the cancer is quite rare, in some less-populated districts it can happen that there is no cancer and thus by necessity no-one died. In other districts it might be that one person got cancer and died. Take the mean of Germany to be 1% rate and 0.2% died. These first two districts have a 0% death-rate and a 100% death-rate respectively. It seems fair to include the information on rate / death rate of all other districts (Germany) to make better predictions on the actual (not the direct observed) rate."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#shrinkage-plot",
+    "href": "slides/day2/mm_slides.html#shrinkage-plot",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Shrinkage-plot",
+    "text": "Shrinkage-plot\n\n\n\n\n\n\n\n\n\n\nEach dot is an estimate of a single subject. The blue dots are after using the mixed model, the reds ones the individual fits.\n\n\n\n\n\n\n\n\n\n\ngray: one model, color: individual model, black: mixed model (with shrinkage)\n\nThe subjects which are shrinked the most are the ones with the least amount of data / highest variance."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#shrinkage-over-multiple-parameters",
+    "href": "slides/day2/mm_slides.html#shrinkage-over-multiple-parameters",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Shrinkage over multiple parameters",
+    "text": "Shrinkage over multiple parameters\n\nSimulated data: Subjects with faster reaction time (intercept) show larger effects for difficulty (slope)\nIn reverse: If I know somebody is generally slow, he should also have a smaller slope!\n\nHere, multiple parameters (two parameters) refer to having an intercept and a slope. But correlation between two effects can also occur for more than two variables (as discussed later). What happens if we don’t do this? This would mean, that each predictor explains unique information, i.e. they are independently predictive. But in our example they clearly are not. Knowing about the average reaction time already tells you something about the other effect."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#the-multivariate-normal-i",
+    "href": "slides/day2/mm_slides.html#the-multivariate-normal-i",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "The multivariate normal I",
+    "text": "The multivariate normal I\n\n\n\nWe move around the multivariate normal distribution to get an intuition what the different parameters do"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#the-multivariate-normal-ii",
+    "href": "slides/day2/mm_slides.html#the-multivariate-normal-ii",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "The multivariate normal II",
+    "text": "The multivariate normal II\n\n\n\n \\(\\rho = 0\\), knowing one dimension does not tell you about the other\n\\[\\sum  =  \\left[ {\\begin{array}{*{20}{c}}\n1&0 \\\\\n0 &1\n\\end{array}} \\right]\\]\n\n\n \\(\\rho = 0.6\\), knowing one dimension tells you something about the other\n\\[\\sum  =  \\left[ {\\begin{array}{*{20}{c}}\n1&0.6 \\\\\n0.6 &1\n\\end{array}} \\right]\\]\n\n\n\n\nA multivariate normal is defined by a vector of means and a covariance matrix (\\(\\sigma\\)). Here I depict two different cov-matrices. Imagine you measure X_2, then in the right panel you know that X_1 is distributed along the red line, with larger values meaning that it is more probable to observe X_1 there. In the left panel, it does not help us to know anything about X_2 to predict X_1. Regardless of where the red line would cross the distribution, the maximal likely value does not change."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#back-to-mixed-models",
+    "href": "slides/day2/mm_slides.html#back-to-mixed-models",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Back to mixed models",
+    "text": "Back to mixed models\n\n\n\n\n\\[\\sum  =  \\left[ {\\begin{array}{*{20}{c}}\n1&\\rho \\\\\n\\rho &1\n\\end{array}} \\right]\\]\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSimilar to degree of freedom, if we have a true underlying correlation between random slopes, we ought to model it - as the datapoints are not as independent as we are hoping for (correlation = 0 assumes independence).\n\nThe left plot again shows the multivariate normal of the parameters (e.g. intercept vs slope). The right plot the actual data. I hope the relation between the two plots became clear. Please note, that the two images do not fit to each other. The sketch on the left should have a tilde downward (a negative correlation!)\nIn the mixed model context we can add this correlation value, i.e. we try to estimate how much the two factors are correlated with each other. Take care, usually this is very difficult to estimate and you need lots of data on the second level! Estimating variances already is difficult, correlations much more so."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#naming-is-a-bit-messy",
+    "href": "slides/day2/mm_slides.html#naming-is-a-bit-messy",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Naming is a bit messy",
+    "text": "Naming is a bit messy\n\n\nRandom/Fixed Coefficients\n\nRandom intercept (1 | subject): Different offset for each subject\nRandom slope (predictor | subject): Different predictor-slope for each subject\nRandom correlation (1 + predictor | subject) or (X + Y | subject): Knowing about X tells you something about Y\nFixed coefficient exactly the same for all subjects\n\n\nRandom/Fixed Variables\n\nRandom variable Instance \\(\\in\\) population, e.g. subjects, images, words\nFixed variable limited number of possible values or no generalization to population needed, e.g. 3 different experimental conditions\n\nRandom effect also used for either random coefficient or random variable\nFixed effect usually refers to the estimator of the population mean\nsource and another 5 different definitions here\n\n\nThis mix of terminology is unfortunate. The first divide is between coefficients and variables, they describe very different things. Then the difference between fixed/random coefficients is less clear. Most often the question “should I model this as a random effect” relates to Random Variable vs. “Fixed Variable”."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#when-to-include-what",
+    "href": "slides/day2/mm_slides.html#when-to-include-what",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "When to include what",
+    "text": "When to include what\nSome guidance:\n\nPredictor is a subset of a population?\n=&gt; random/grouping variable e.g. subjects, images, words\nPredictor is within subject/grouping?\n=&gt; random coefficients\nPredictor is between subject/grouping or aggregated?\n=&gt; only fixed coefficient\n\n\nSometimes its clear, e.g. you record 40 images of faces and the faces are a random example from all face stimuli. sometimes its difficult, e.g. you measure 5 subjects, are these enough to estimate the random variance parameter?\nsee discussion here"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#a-quiz-on-when-something-is-what",
+    "href": "slides/day2/mm_slides.html#a-quiz-on-when-something-is-what",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "A quiz on when something is what",
+    "text": "A quiz on when something is what\nvery often you will need to decide whether something belongs to the fixed effects, to the random effects, or both.\n\n---\nshuffleQuestions: false\nshuffleAnswers: false\n---\n# `Subject`\n- [ ] Fixed Effect\n- [ ] Random Slope\n- [x] Random Grouping Variable\n\n# `reaction time`\nas a predictor\n- [x] Fixed Effect\n- [x] Random Slope\n- [ ] Random Grouping Variable\n\n\n# `Age`\n- [x] Fixed Effect\n- [ ] Random Slope\n- [ ] Random Grouping Variable\n\n# `Gender`\n- [x] Fixed Effect\n- [ ] Random Slope\n- [ ] Random Grouping Variable\n\n# `Contrast`\nModified within-subject\n- [x] Fixed Effect\n- [x] Random Slope\n- [ ] Random Grouping Variable\n\n# `Contrast`\nModified between-subject\n- [x] Fixed Effect\n- [ ] Random Slope\n- [ ] Random Grouping Variable\n\n# `Sentence ID`\n- [ ] Fixed Effect\n- [ ] Random Slope\n- [x] Random Grouping Variable\n\n\n# `Trial Number`\n- [x] Fixed Effect\n- [x] Random Slope\n- [ ] Random Grouping Variable"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#a-more-complex-model",
+    "href": "slides/day2/mm_slides.html#a-more-complex-model",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "A more complex model",
+    "text": "A more complex model\n\nd.contrastSquare = d.contrast .^ 2\n\nm_complex = lmm(@formula(estim_error ~ 1 + contrast + contrastSquare + (1 + contrast + contrastSquare | subject)), d)\nm_complex |&gt; DisplayAs.Text\n\n\nMinimizing 5487    Time: 0:00:00 (18.23 μs/it)\n   objective: 2291.417191548735\n\n\nMinimizing 10971    Time: 0:00:00 (18.40 μs/it)\n   objective: 2220.2991443109613\n\n\nMinimizing 16376    Time: 0:00:00 (18.79 μs/it)\n   objective: 2219.744788266464\n\n\nMinimizing 16613    Time: 0:00:00 (18.79 μs/it)\n\n\n\n\nLinear mixed model fit by maximum likelihood\n estim_error ~ 1 + contrast + contrastSquare + (1 + contrast + contrastSquare | subject)\n   logLik   -2 logLik     AIC       AICc        BIC    \n -1109.8707  2219.7415  2239.7415  2240.4421  2277.5797\n\nVariance components:\n             Column       Variance   Std.Dev.    Corr.\nsubject  (Intercept)     33.70396553 5.80551165\n         contrast         0.04929162 0.22201717 -0.83\n         contrastSquare   0.00000083 0.00091138 +0.99 -0.91\nResidual                 42.86672821 6.54726876\n Number of obs: 325; levels of grouping factors: 20\n\n  Fixed-effects parameters:\n────────────────────────────────────────────────────────\n                      Coef.   Std. Error     z  Pr(&gt;|z|)\n────────────────────────────────────────────────────────\n(Intercept)     5.08396      1.70072      2.99    0.0028\ncontrast        0.0280692    0.0716026    0.39    0.6950\ncontrastSquare  0.000819554  0.000537696  1.52    0.1275\n────────────────────────────────────────────────────────"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#common-warnings-signs",
+    "href": "slides/day2/mm_slides.html#common-warnings-signs",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Common warnings signs",
+    "text": "Common warnings signs\n\nR: Model failed to converge: degenerate Hessian with negative eigenvalues\nJulia: PosDefException\nOptimizers needs maaaany iterations\n\n\nOften, when using a more complex model, the model fit returns a singular model. We will have a look next on what to do then."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#convergence-vs.-singularity-problems",
+    "href": "slides/day2/mm_slides.html#convergence-vs.-singularity-problems",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Convergence vs. Singularity problems",
+    "text": "Convergence vs. Singularity problems\nConvergences\n\nReal convergence problems are rare in R::lme4, and extremely rare in MixedModels.jl\nTypically the objective function is extremely flat and the optimizer struggles =&gt; change optimizer, change data (outliers?), missspecifications\nCenter predictors (remove mean) and scale (divide by SD of independent variable)\n\nSingularity\nMost common issue is singular fits\nHow to Spot?\n\n-1/+1/0 in variance estimation\nrePCA\nlikelihood ratio tests\n\nWhy?\nYou don’t have enough data to estimate the random effects structure\nHow to fix?\nDifferent opinions: 1. “Keep it maximal” - nothing to do, just use as is 2. “Simplify” - simplify until non-singular"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#the-ideal-case",
+    "href": "slides/day2/mm_slides.html#the-ideal-case",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "The ideal case",
+    "text": "The ideal case\n\\[ \\sum  = \\left[ {\\begin{array}{*{20}{c}}\n1&{{\\rho_{ab}}}&{{\\rho_{ac}}}&{{\\rho_{ad}}}\\\\\n{{\\rho_{ab}}}&1&{{\\rho_{bc}}}&{{\\rho_{bd}}}\\\\\n{{\\rho_{ac}}}&{{\\rho_{bc}}}&1&{{\\rho_{cd}}}\\\\\n{{\\rho_{ad}}}&{{\\rho_{bd}}}&{{\\rho_{cd}}}&1\n\\end{array}} \\right]\\]\n@formula(y ~ 1 + A + B + C + (1 + A + B + C | group))\nIf you have enough data, try to estimate all correlations.\n\nThis model has very many parameters. See that there is a combinatorial explosion, adding one more effect will result in n-coefficients - 1 new correlations!\nAs a side note: it is also possible have correlation matrices, where some effects covary and others do not."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#the-simplest-structure",
+    "href": "slides/day2/mm_slides.html#the-simplest-structure",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "The simplest structure",
+    "text": "The simplest structure\n\n\n\n\\[\\Sigma  = \\left[ {\\begin{array}{*{20}{c}}\n1&0&0&0\\\\\n0&1&0&0\\\\\n0&0&1&0\\\\\n0&0&0&1\n\\end{array}} \\right]\\]\n @formula(y ~ 1 + X1 + X2 + X3 + zerocorr(1 + X1 + X2 + X3 | group))\n R::LME4 formula y ~ 1 + X1 + X2 + X3 + (1 + X1 + X2 + X3 || group)\nnote the || instead of |\n\n\n\\[\\Sigma  = \\left[ {\\begin{array}{*{20}{c}}\n1&{{\\rho _a}}&{{\\rho _a}}&{{\\rho _a}}\\\\\n{{\\rho _a}}&1&{{\\rho _a}}&{{\\rho _a}}\\\\\n{{\\rho _a}}&{{\\rho _a}}&1&{{\\rho _a}}\\\\\n{{\\rho _a}}&{{\\rho _a}}&{{\\rho _a}}&1\n\\end{array}} \\right]\\]\nCompound symmetry \\(\\simeq\\) Repeated measures ANOVA\n @formula(y ~ 1 + X1 + (1 | group) + (1 | group:X1)) \n\n\n\n\nThe left side shows the very strong assumption, that all effects are uncorrelated to each other. This is usually not the case, try to avoid (except in the very rare situation its the correct model). The right one can be used more often, the specification might be unclear."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#which-one-to-choose",
+    "href": "slides/day2/mm_slides.html#which-one-to-choose",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Which one to choose?",
+    "text": "Which one to choose?\n\n1: You can estimate the full (enough data or put a LKJ-prior if you are Bayesian)\n2: Prior assumption on shape and you don’t have to change it (non-contingent on data)\n3: Simplify in a data-driven way\n\nOngoing debate “Keep it maximal”, Barr et al. 2013 vs. “Parsimonious mixed models”, Bates et al. 2015 and “Balancing Type I error and power in linear mixed models”, Matuschek et al. 2017\nBarr promotes full models. Bates/Matuschek promotes a step wise reduction if effects do not significantly explain variance\n\nRemember the problems of step-wise procedures. There is currently a long debate and no solution - sorry!"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#a-clarification-to-simplification",
+    "href": "slides/day2/mm_slides.html#a-clarification-to-simplification",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "A clarification to simplification",
+    "text": "A clarification to simplification\nOften people simplify like this:\ny ~ 1 + X * Y + (1 + X * Y | group)\n\ny ~ 1 + X * Y + zerocorr(1 + X * Y | group)\n\ny ~ 1 + X * Y + zerocorr(1 + X + Y | group)\n\ny ~ 1 + X * Y + zerocorr(1 + X | group)\n\ny ~ 1 + X * Y + (1 | group)\nBut if your hypothesis is on the interaction of X&Y, (following Matuschek) you should rather\ny ~ 1 + X * Y + (1 + X * Y | group)\n\ny ~ 1 + X * Y + zerocorr(1 + X * Y | group)\n\ny ~ 1 + X * Y + zerocorr(1 + X + X&Y | group)\n\ny ~ 1 + X * Y + zerocorr(1 + X&Y| group)\n\ny ~ 1 + X * Y + (0 + X&Y | group)\ni.e. keep the random slopes for the effect you are most interested in the longest."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#words-of-warnings",
+    "href": "slides/day2/mm_slides.html#words-of-warnings",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Words of warnings",
+    "text": "Words of warnings\n\nA common misconception is that crossing subjects and items in the intercept term of LMEMs is sufficient for meeting the assumption of conditional independence, and that including random slopes is strictly unnecessary […]. Indeed, some researchers have already warned against using random-intercepts-only models when random slope variation is present (e.g., Baayen, 2008; Jaeger, 2011a; Roland, 2009; Schielzeth & Forstmeier, 2009)\n\nBarr et. al. 2013\nRead a more detailed discussion on my blog"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#multiple-random-variables",
+    "href": "slides/day2/mm_slides.html#multiple-random-variables",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Multiple random variables",
+    "text": "Multiple random variables"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#model-summary",
+    "href": "slides/day2/mm_slides.html#model-summary",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Model summary",
+    "text": "Model summary\n\n\nLinear mixed model fit by maximum likelihood\n y ~ 1 + condition + (1 + condition | subject)\n   logLik   -2 logLik     AIC       AICc        BIC    \n -4286.7265  8573.4529  8585.4529  8585.5470  8614.2673\n\nVariance components:\n            Column    Variance   Std.Dev.   Corr.\nsubject  (Intercept)   28.217447  5.312010\n         condition      0.849759  0.921824 -1.00\nResidual              785.775695 28.031691\n Number of obs: 900; levels of grouping factors: 30\n\n  Fixed-effects parameters:\n──────────────────────────────────────────────────\n                Coef.  Std. Error      z  Pr(&gt;|z|)\n──────────────────────────────────────────────────\n(Intercept)  -1.84133     1.63913  -1.12    0.2613\ncondition    -4.59955     1.87634  -2.45    0.0142\n──────────────────────────────────────────────────\n\n\nWhat a nice effect! Write paper and end of story?"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#but-very-high-stimulus-variance",
+    "href": "slides/day2/mm_slides.html#but-very-high-stimulus-variance",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "But very high stimulus variance!",
+    "text": "But very high stimulus variance!"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#but-very-high-stimulus-variance-1",
+    "href": "slides/day2/mm_slides.html#but-very-high-stimulus-variance-1",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "But very high stimulus variance!",
+    "text": "But very high stimulus variance!"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#but-very-high-stimulus-variance-2",
+    "href": "slides/day2/mm_slides.html#but-very-high-stimulus-variance-2",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "But very high stimulus variance",
+    "text": "But very high stimulus variance\n\nHigh unmodelled variance can lead to sporadic effects.\n\nIf we group the data not by subject, but by stimulus we see two types of variation. Variation for each stimulus (each dot is a subject) and variation between stimuli (the means of the stimuli are very different)"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#model-with-stimulus-random-effect",
+    "href": "slides/day2/mm_slides.html#model-with-stimulus-random-effect",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Model with stimulus random effect",
+    "text": "Model with stimulus random effect\n\n\nLinear mixed model fit by maximum likelihood\n y ~ 1 + condition + (1 + condition | subject) + (1 + condition | stimulus)\n   logLik   -2 logLik     AIC       AICc        BIC    \n -2494.3762  4988.7523  5006.7523  5006.9546  5049.9739\n\nVariance components:\n            Column    Variance Std.Dev.   Corr.\nsubject  (Intercept)   71.09469  8.43177\n         condition     51.71847  7.19156 -0.55\nstimulus (Intercept)  603.84803 24.57332\n         condition     25.64481  5.06407 +1.00\nResidual                8.62000  2.93598\n Number of obs: 900; levels of grouping factors: 30, 30\n\n  Fixed-effects parameters:\n──────────────────────────────────────────────────\n                Coef.  Std. Error      z  Pr(&gt;|z|)\n──────────────────────────────────────────────────\n(Intercept)  -1.84133     6.53035  -0.28    0.7780\ncondition    -4.59955    10.0285   -0.46    0.6465\n──────────────────────────────────────────────────\n\n\nOften it is necessary to add multiple random effects! Examples are: subjects, stimuli (images, words, etc)\n@formula(y ~ 1 + condA + (1 + condA | subject) + (1 | stimulus))\n\nIf we arbitrarily divide the stimuli in two categories, we will always get a small difference (in relation to the variance of stimuli this difference is small, in relation to the variance of subjects this difference is huge!). If we do not model the stimulus variation we would conclude that there is a large effect of condition - whereas it is just a random partition of stimuli!\nLuckily it is very easy to include this into the model formula."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#what-to-generalize-over",
+    "href": "slides/day2/mm_slides.html#what-to-generalize-over",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "What to generalize over?",
+    "text": "What to generalize over?\nWhy do we add subject random effects?\nWe want to generalize over subjects\nWhy should we add item random effects?\nWe want to generalize over items!\nIf we leave one of these two, we will (\\(\\approx\\)) make statistical inferences on the sample at hand, without much generalization."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#simpsons-paradox",
+    "href": "slides/day2/mm_slides.html#simpsons-paradox",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Simpsons Paradox?",
+    "text": "Simpsons Paradox?"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#simpsons-paradox-1",
+    "href": "slides/day2/mm_slides.html#simpsons-paradox-1",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Simpson’s Paradox!",
+    "text": "Simpson’s Paradox!"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#some-models",
+    "href": "slides/day2/mm_slides.html#some-models",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Some models",
+    "text": "Some models\n\n\n\nStatsModels.TableRegressionModel{LinearModel{GLM.LmResp{Vector{Float64}}, GLM.DensePredChol{Float64, CholeskyPivoted{Float64, Matrix{Float64}, Vector{Int64}}}}, Matrix{Float64}}\n\ncomprehension_score_mean ~ 1 + dwell_time_mean\n\nCoefficients:\n─────────────────────────────────────────────────────────────────────────────\n                    Coef.  Std. Error       t  Pr(&gt;|t|)  Lower 95%  Upper 95%\n─────────────────────────────────────────────────────────────────────────────\n(Intercept)      19.8291     0.243859   81.31    &lt;1e-05   19.0531    20.6052\ndwell_time_mean  -1.27787    0.031882  -40.08    &lt;1e-04   -1.37933   -1.17641\n─────────────────────────────────────────────────────────────────────────────\n\n\n\n\n\n\n\n\n\nEst.\nSE\nz\np\nσ_subject\n\n\n(Intercept)\n-0.8922\n1.8372\n-0.49\n0.6272\n4.0736\n\n\ndwell_time\n1.4644\n0.0396\n37.01\n&lt;1e-99\n0.0545\n\n\nResidual\n0.9953"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#the-within-between-model",
+    "href": "slides/day2/mm_slides.html#the-within-between-model",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "The within-between model",
+    "text": "The within-between model\nWe can model this with LMMs, by disentangling the effect of x on the average with x on the individual.\n\n\n\n\n\n\nEst.\nSE\nz\np\nσ_subject\n\n\n(Intercept)\n19.9068\n0.2051\n97.04\n&lt;1e-99\n0.0439\n\n\ndt_avg\n-1.2882\n0.0268\n-48.07\n&lt;1e-99\n\n\n\ndt_dev\n1.4653\n0.0350\n41.83\n&lt;1e-99\n0.0356\n\n\nResidual\n0.9955\n\n\n\n\n\n\n\n\n\ntldr;: Centering is not as straight forward as in LinearModels!\nFor detailed info on centering, have a read here (based on schools/students) # Simulating data with MixedModelsSim.jl\nMixedModelsSim.jl provides tools for simulating data from mixed models - much easier than manual simulation!"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#setting-up-a-crossed-design",
+    "href": "slides/day2/mm_slides.html#setting-up-a-crossed-design",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Setting up a crossed design",
+    "text": "Setting up a crossed design\n\n\n6×6 DataFrame\n\n\n\nRow\nsubj\nage\nitem\nfrequency\ncontext\ndv\n\n\n\nString\nString\nString\nString\nString\nFloat64\n\n\n\n\n1\nS01\nold\nI01\nhigh\nmatched\n1.21028\n\n\n2\nS02\nyoung\nI01\nhigh\nmatched\n-0.0789986\n\n\n3\nS03\nold\nI01\nhigh\nmatched\n0.403512\n\n\n4\nS04\nyoung\nI01\nhigh\nmatched\n0.289951\n\n\n5\nS05\nold\nI01\nhigh\nmatched\n-0.0670422\n\n\n6\nS06\nyoung\nI01\nhigh\nmatched\n0.61398\n\n\n\n\n\n\nsimdat_crossed generates a complete crossed design with a dv column (filled with noise)."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#fitting-the-null-model",
+    "href": "slides/day2/mm_slides.html#fitting-the-null-model",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Fitting the null model",
+    "text": "Fitting the null model\n\n\n\nMinimizing 178    Time: 0:00:00 ( 0.56 ms/it)\n   objective: 18153.4137115021\n\n\nMinimizing 315    Time: 0:00:00 ( 0.56 ms/it)\n\n\n\n\n\n\n\n\nEst.\nSE\nz\np\nσ_item\nσ_subj\n\n\n(Intercept)\n-0.0147\n0.0146\n-1.01\n0.3123\n0.0596\n0.0230\n\n\nage: old\n0.0073\n0.0134\n0.54\n0.5879\n0.0321\n\n\n\nfrequency: low\n0.0043\n0.0162\n0.27\n0.7910\n\n0.0504\n\n\ncontext: unmatched\n-0.0108\n0.0141\n-0.76\n0.4454\n0.0516\n0.0208\n\n\nage: old & frequency: low\n-0.0248\n0.0152\n-1.63\n0.1029\n\n\n\n\nage: old & context: unmatched\n-0.0100\n0.0129\n-0.78\n0.4369\n\n\n\n\nfrequency: low & context: unmatched\n-0.0115\n0.0137\n-0.84\n0.4028\n\n\n\n\nage: old & frequency: low & context: unmatched\n-0.0183\n0.0124\n-1.47\n0.1406\n\n\n\n\nResidual\n0.9947"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#specifying-random-effects",
+    "href": "slides/day2/mm_slides.html#specifying-random-effects",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Specifying random effects",
+    "text": "Specifying random effects\n\n\n3×3 LowerTriangular{Float64, Diagonal{Float64, Vector{Float64}}}:\n 1.5   ⋅    ⋅ \n 0.0  0.5   ⋅ \n 0.0  0.0  0.75\n\n\nThink about random effects relative to residual variance:\n\nItems: Intercept variability = 1.3× residual, Age = 0.35×, Context = 0.75×\nSubjects: Intercept = 1.5×, Frequency = 0.5×, Context = 0.75×"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#creating-the-parameter-vector",
+    "href": "slides/day2/mm_slides.html#creating-the-parameter-vector",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Creating the parameter vector",
+    "text": "Creating the parameter vector\n\n\n\n\n\n\nColumn\nVariance\nStd.Dev\nCorr.\n\n\n\nitem\n(Intercept)\n1.586719\n1.259650\n\n\n\n\n\nage: old\n0.115014\n0.339137\n+0.00\n\n\n\n\ncontext: unmatched\n0.528124\n0.726721\n+0.00\n+0.00\n\n\nsubj\n(Intercept)\n2.112496\n1.453443\n\n\n\n\n\nfrequency: low\n0.234722\n0.484481\n+0.00\n\n\n\n\ncontext: unmatched\n0.528124\n0.726721\n+0.00\n+0.00\n\n\nResidual\n\n0.938887\n0.968962\n\n\n\n\n\n\n\nGet the compact parameter vector θ:\n\n\n[1.3, 0.0, 0.0, 0.35, 0.0, 0.75, 1.5, 0.0, 0.0, 0.5, 0.0, 0.75]"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#fixed-effects-residual-variance",
+    "href": "slides/day2/mm_slides.html#fixed-effects-residual-variance",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Fixed effects & residual variance",
+    "text": "Fixed effects & residual variance\n\n\n8-element Vector{String}:\n \"(Intercept)\"\n \"age: old\"\n \"frequency: low\"\n \"context: unmatched\"\n \"age: old & frequency: low\"\n \"age: old & context: unmatched\"\n \"frequency: low & context: unmatched\"\n \"age: old & frequency: low & context: unmatched\"\n\n\nEach entry in β corresponds to a model coefficient (intercept, main effects, interactions)."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#running-the-simulation",
+    "href": "slides/day2/mm_slides.html#running-the-simulation",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Running the simulation",
+    "text": "Running the simulation\n\n\nMixedModelBootstrap with 20 samples\n      parameter  min         q25         median      mean        q75        ⋯\n    ┌────────────────────────────────────────────────────────────────────────\n 1  │ β1         -3.46254    -0.0275183  0.951426    1.05389     2.30673    ⋯\n 2  │ β2         -3.15569    -2.21155    -1.65746    -1.40177    -0.725325  ⋯\n 3  │ β3         0.0472057   1.47878     1.78613     1.84538     2.20689    ⋯\n 4  │ β4         -2.78027    -1.84879    -1.38575    -1.31679    -0.506349  ⋯\n 5  │ β5         -0.409183   0.00758897  0.388057    0.367569    0.706757   ⋯\n 6  │ β6         -2.54446    -1.7043     -1.27281    -1.31153    -0.760097  ⋯\n 7  │ β7         0.963731    1.17698     1.36732     1.44359     1.6929     ⋯\n 8  │ β8         -0.0696417  -0.0416162  -0.0185569  0.00739991  0.0592813  ⋯\n 9  │ σ          4.92495     4.96082     4.97544     4.99539     5.0203     ⋯\n 10 │ σ1         5.64349     6.09127     6.40118     6.38396     6.63154    ⋯\n 11 │ σ2         1.5139      1.60647     1.70624     1.71682     1.80015    ⋯\n 12 │ σ3         3.29787     3.46925     3.72583     3.71262     3.9258     ⋯\n 13 │ ρ1         -0.192497   -0.1206     -0.0325372  -0.0119042  0.0456619  ⋯\n 14 │ ρ2         -0.274825   -0.0557584  0.0390509   0.00784918  0.0881113  ⋯\n 15 │ ρ3         -0.198073   -0.0877543  -0.0369617  -0.0259335  0.0270145  ⋯\n 16 │ σ4         5.88389     6.33632     7.16812     7.21933     8.15101    ⋯\n 17 │ σ5         2.01423     2.25997     2.4964      2.47636     2.69411    ⋯\n ⋮  │     ⋮          ⋮           ⋮           ⋮           ⋮           ⋮      ⋱\n\n\nFor embedding in loops (where design changes):\nsim = parametricbootstrap(MersenneTwister(12321), 20, m0;\n                          β=β, σ=σ,\n                          θ=createθ(m0; subj=re_subj, item=re_item))"
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#power-analysis",
+    "href": "slides/day2/mm_slides.html#power-analysis",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Power analysis",
+    "text": "Power analysis\n\n\n8×2 DataFrame\n\n\n\nRow\ncoefname\npower\n\n\n\nString\nFloat64\n\n\n\n\n1\nage: old & frequency: low\n0.15\n\n\n2\nfrequency: low & context: unmatched\n1.0\n\n\n3\nage: old\n0.25\n\n\n4\ncontext: unmatched\n0.5\n\n\n5\n(Intercept)\n0.25\n\n\n6\nfrequency: low\n0.6\n\n\n7\nage: old & context: unmatched\n0.65\n\n\n8\nage: old & frequency: low & context: unmatched\n0.0\n\n\n\n\n\n\nThe power table shows estimation accuracy across simulated datasets!\n\nMixedModelsSim.jl makes it easy to: 1. Set up realistic experimental designs (crossed, nested) 2. Specify random effects structure 3. Run parametric bootstrap simulations 4. Evaluate statistical power\nThis is particularly useful for study design - you can simulate different sample sizes, effect sizes, and variance structures before collecting real data."
+  },
+  {
+    "objectID": "slides/day2/mm_slides.html#papers-books",
+    "href": "slides/day2/mm_slides.html#papers-books",
+    "title": "Mixed Models / Hierarchical Models",
+    "section": "Papers & Books",
+    "text": "Papers & Books\n\nFAQ on GLMMs\nBook: Data Analysis Using Regression and Multilevel/Hierarchical Models\nBook: Regression Modeling Strategies\n(advanced) Book: Richly Parameterized Linear Models: Additive, Time Series, and Spatial Models Using Random Effects\nBook on LME4\nPaper: Parsimonious Mixed Models\nPaper: Random effects structure for confirmatory hypothesis testing: Keep it maximal\nExample Study: Experimental effects and individual differences in linear mixed models: estimating the relationship between spatial, object, and attraction effects in visual attention\nK-State Mixed Models Workshop Material (a bit more mathy)"
   }
 ]
