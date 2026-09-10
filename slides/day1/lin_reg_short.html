@@ -445,7 +445,7 @@
 
   <meta name="author" content="Benedikt Ehinger">
   <meta name="dcterms.date" content="2026-09-10">
-  <title>LMM Workshop 2026 – Applied Generalized Linear (Mixed) Modelling</title>
+  <title>LMM Workshop 2026 – Linear (Mixed) Modelling - The linear modelling part</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -1070,7 +1070,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Applied Generalized Linear (Mixed) Modelling</h1>
+  <h1 class="title">Linear (Mixed) Modelling - The linear modelling part</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -2724,7 +2724,7 @@ As you can see, the standard error of the mean (SEM)* is the standard deviation 
 
 ## Confidence Interval as an area of the sampling distribution
 
-```vqffvqu
+```dinixzb
 x_mu = 2
 x_sd = 1.5
 x_vals = range(-5, 10, step=0.05)
@@ -2809,7 +2809,7 @@ Interesting things to look up are socalled "Precision Matrices" (the $(XX^T)^{-1
 </aside>
 
 ## Walds t-test
-```vqffvqu
+```dinixzb
 #| echo: true
 coeftable(fit_soc)
 ```
@@ -2824,7 +2824,7 @@ You should note here, that dividing the coefficient by the SD gives you a t-valu
 I tend to think of a t-value as a standardization procedure. You want a "scale-free" value. That is, you want to normalize from your coefficient scale (e.g. meter vs kilometer) to a standardized space ("t-units"). By this, you don't need to have a different sampling distribution whether you describe your coefficient in meters or in kilometers
 
 ## What is a t-distribution?
-```vqffvqu
+```dinixzb
 x_vals = range(-5, 5, step=0.1)
 dfT = [1, 2, 5, 50, 100]
 datT = DataFrame(x=Float64[], df=String[], value=Float64[])
@@ -3594,7 +3594,7 @@ Your browser does not support the video tag.
 
 ## Bootstrapping in Julia
 
-```vqffvqu
+```dinixzb
 #| echo: false
 fit_bs = lm(@formula(read ~ math * socst), dSoc)
 coeftable(fit_bs)
@@ -3615,7 +3615,7 @@ end
 Random.seed!(42)
 bootres = bootstrap_coefs(dSoc, 1000)
 ```
-```vqffvqu
+```dinixzb
 #| echo: false
 coef_names = coefnames(fit_bs)
 dboot = DataFrame(
@@ -3642,7 +3642,7 @@ We can plot the bootstrap distributions to inspect them. But usually we are more
 
 ## Continued
 
-```vqffvqu
+```dinixzb
 #| echo: true
 # Bootstrap confidence interval (percentile method)
 boot_coefs_math_socst = bootres[:, findfirst("math & socst".== coef_names)]

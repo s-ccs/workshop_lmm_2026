@@ -1731,7 +1731,7 @@ display:block!important;
 <!--
 ## Direct comparison of 2-stage vs mixed model
 
-```ttgfnoy
+```askpbts
 #| echo: false
 #| fig-width: 8
 #| fig-height: 4
@@ -1761,7 +1761,7 @@ current_figure()
 ```
 
 two stage:
-```ttgfnoy
+```askpbts
 #| echo: false
 #| results: 'markup'
 
@@ -1769,7 +1769,7 @@ m_2stage = lm(@formula(m ~ 1), DataFrame(m=coefs.estimate[coefs.term .== "contra
 "  Estimate: $(coef(m_2stage)[1])   Std. Error: $(stderror(m_2stage)[1])"
 ```
 mixed-model:
-```ttgfnoy
+```askpbts
 #| echo: false
 #| results: 'markup'
 
