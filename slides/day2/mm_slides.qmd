@@ -1750,6 +1750,7 @@ lmm(@formula(comprehension_score~1+dwell_time+(1+dwell_time|subject)),d)
 We can model this with LMMs, by disentangling the effect of `x` on the `average` with `x` on the `individual`.
 
 ```{julia}
+|echo: true
 for g in groupby(d,[:subject])
      g.dt_avg .= mean(g.dwell_time)
      g.dt_dev .= g.dwell_time .- mean(g.dwell_time)

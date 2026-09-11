@@ -1,5 +1,5 @@
 ---
-title: Applied Generalized Linear (Mixed) Modelling
+title: Linear (Mixed) Modelling - The linear modelling part
 author: "Benedikt Ehinger"
 date: last-modified
 format:
@@ -14,6 +14,8 @@ format:
 execute:
   cache: true
 engine: julia
+
+
 ---
 
 ```{julia}
@@ -550,12 +552,14 @@ error = randn(60) .* 0.1
 Y  = R .+ error
 
 d_supp = DataFrame(S=S, OV=OV, Y=Y)
-res = residuals(lm(@formula(S ~ OV), d_supp))
+res = residuals(lm(@formula(S ~ OV), d_supp));
+```
+
+```{julia}
+coeftable(lm(@formula(Y ~ OV), d_supp))
 ```
 ```{julia}
-#| echo: false
 coeftable(lm(@formula(Y ~ OV + S), d_supp))
-coeftable(lm(@formula(Y ~ OV), d_supp))
 ```
 
 ## a graphical intuition
@@ -812,9 +816,15 @@ Effect coding main effects
 
 
 ## Effect coding to the help!
+
+#### dummy coding
 ```{julia}
 # Dummy coding (default)
 coeftable(lm(@formula(hp ~ wt * am), d))
+```
+
+#### effects coding
+```{julia}
 
 # Effect coding: recode am to -0.5/0.5
 d.am_eff = (d.am .== 0) .* (-0.5) .+ (d.am .== 1) .* 0.5
@@ -908,7 +918,7 @@ Interaction between two continuous variables can be seen as twistings of the pla
 </aside>
 
 
-# section
+# Statistical testing
 
 ##
 
@@ -1305,13 +1315,15 @@ Please never just pick the parameter that was significant and report only that o
 
 There are ways to do this more or less correctly i.e. multiple comparison correction or hierarchical models over the effects (usually in a bayesian sense). We will not dive into these in this course.
 </aside>
+
 ## Testing
+
 ```{julia}
 #| echo: true
 m0 = lm(@formula(price ~ 1), d_sub)
 m1 = lm(@formula(price ~ 1 + ngb), d_sub)
-r²0 = r2(m0)
-r²1 = r2(m1)
+r²0 = GLM.r2(m0)
+r²1 = GLM.r2(m1)
 n = nrow(d_sub)
 p1 = length(coef(m1)) - 1
 p0 = length(coef(m0)) - 1
@@ -1381,7 +1393,7 @@ m_int =  lm(@formula(y ~ 1 + A_num & B_num), dsim)
 
 ## Model comparison does not care about recoding
 
-
+#### dummy
 ```{julia}
 #| echo: false
 d = mtcars
@@ -1393,6 +1405,8 @@ d.am_eff = (d.am .== 0) .* (-0.5) .+ (d.am .== 1) .* 0.5
 
 coeftable(m_dummy)
 ```
+
+#### effects
 ```{julia}
 #| echo: false
 # Effect coding
